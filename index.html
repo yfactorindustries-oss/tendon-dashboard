@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tendon Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    .app-container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 3rem;
+    }
+    header {
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin: 0 0 0.25rem;
+    }
+    .sub {
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+    .card {
+      background: #020617;
+      border-radius: 0.75rem;
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.9rem;
+      border: 1px solid #1f2937;
+    }
+    .card h2 {
+      font-size: 1rem;
+      margin: 0 0 0.5rem;
+    }
+    .small {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    .list-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 0.25rem 0;
+    }
+    .list-item label {
+      flex: 1;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .list-item input[type="checkbox"] {
+      margin-right: 0.5rem;
+      margin-top: 0.15rem;
+    }
+    .exercise-title {
+      font-weight: 500;
+    }
+    .exercise-meta {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    .sets-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.25rem;
+    }
+    .set-pill {
+      border-radius: 999px;
+      border: 1px solid #374151;
+      padding: 0.1rem 0.55rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .set-pill.done {
+      background: #22c55e33;
+      border-color: #22c55e;
+    }
+    .pain-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    .pain-item label {
+      display: block;
+      font-size: 0.8rem;
+      margin-bottom: 0.15rem;
+    }
+    .pain-item input[type="number"] {
+      width: 100%;
+      padding: 0.2rem 0.3rem;
+      border-radius: 0.4rem;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.85rem;
+      box-sizing: border-box;
+    }
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.5rem;
+      gap: 0.5rem;
+    }
+    button {
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    button:hover {
+      border-color: #9ca3af;
+    }
+    .rest-note {
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 0.35rem;
+    }
+    .status-dot.green { background: #22c55e; }
+    .status-dot.yellow { background: #eab308; }
+    .status-dot.red { background: #ef4444; }
+
+    .chip {
+      display: inline-block;
+      margin-left: 0.4rem;
+      padding: 0.05rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      font-size: 0.7rem;
+      color: #9ca3af;
+      background: #020617;
+    }
+
+    a.exercise-link {
+      color: #e5e7eb;
+      text-decoration: underline;
+    }
+
+    .timer-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.2rem;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      flex-wrap: wrap;
+    }
+    .timer-btn {
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      padding: 0.1rem 0.5rem;
+      font-size: 0.75rem;
+      background: #020617;
+      cursor: pointer;
+    }
+    .timer-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    .timer-btn.done {
+      background: #22c55e33;
+      border-color: #22c55e;
+    }
+    .timer-display {
+      min-width: 3rem;
+      text-align: left;
+    }
+
+    .load-row {
+      margin-top: 0.25rem;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .load-row input[type="number"] {
+      width: 4rem;
+      padding: 0.15rem 0.3rem;
+      border-radius: 0.35rem;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.8rem;
+      box-sizing: border-box;
+    }
+
+    .cue-toggle {
+      margin-top: 0.25rem;
+      font-size: 0.75rem;
+      background: none;
+      border: none;
+      padding: 0;
+      color: #9ca3af;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .cue-panel {
+      margin-top: 0.2rem;
+      padding: 0.35rem 0.5rem;
+      border-radius: 0.5rem;
+      background: #020617;
+      border: 1px dashed #374151;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      display: none;
+    }
+    .cue-panel ul {
+      margin: 0;
+      padding-left: 1rem;
+    }
+    .cue-panel li {
+      margin: 0.1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1>Tendon Dashboard</h1>
+      <div class="sub" id="dateText"></div>
+    </header>
+
+    <section class="card">
+      <h2>Daily Rehab (10 minutes)</h2>
+      <div id="rehabList"></div>
+      <div class="small" id="rehabStatus"></div>
+    </section>
+
+    <section class="card">
+      <h2 id="workoutTitle">Today's Session</h2>
+      <div class="small" id="workoutSubtitle"></div>
+      <div id="workoutContent"></div>
+    </section>
+
+    <section class="card">
+      <h2>Pain / Readiness</h2>
+      <div class="small">0 = none, 10 = worst imaginable.</div>
+      <div class="pain-grid" id="painGrid"></div>
+      <div class="footer-row">
+        <div class="small" id="readinessText"></div>
+        <button id="resetDayBtn" type="button">Reset Today</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Config</h2>
+      <div class="small">Load a new <code>config.json</code> to update the program.</div>
+      <div class="footer-row">
+        <input type="file" id="configUpload" accept="application/json">
+        <button id="reloadConfigBtn" type="button">Reload default config</button>
+      </div>
+    </section>
+  </div>
+  <script src="dashboard.js"></script>
+</body>
+</html>

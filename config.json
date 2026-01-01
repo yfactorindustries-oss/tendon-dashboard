@@ -1,0 +1,366 @@
+{
+  "dailyRehab": [
+    {
+      "id": "axilla_release",
+      "label": "Posterior Axilla Ball",
+      "details": "60 sec against wall",
+      "equipment": "bodyweight",
+      "video": "https://www.youtube.com/watch?v=j33SbVzsrd0",
+      "durationSeconds": 60,
+      "sets": 1,
+      "restSeconds": 0,
+      "cues": [
+        "Setup: Ball in posterior armpit, lean into wall.",
+        "Execution: Small slow arm sweeps; hunt for tender band.",
+        "Constraint: Pain \u2264 4/10, no numbness/tingling."
+      ]
+    },
+    {
+      "id": "thread_the_needle",
+      "label": "Thread-the-Needle",
+      "details": "10 slow reps",
+      "equipment": "bodyweight",
+      "video": "https://www.youtube.com/watch?v=WK1GOAtVo4c",
+      "durationSeconds": 0,
+      "sets": 0,
+      "restSeconds": 0
+    },
+    {
+      "id": "glute_wall_hold",
+      "label": "Glute Med Wall Hold (Right)",
+      "details": "30 sec \u00d7 2",
+      "equipment": "bodyweight",
+      "video": "https://www.youtube.com/watch?v=W8Vp7ueoWSs",
+      "durationSeconds": 30,
+      "sets": 2,
+      "restSeconds": 30,
+      "cues": [
+        "Setup: Right leg on floor, right hip to wall, left foot slightly away.",
+        "Execution: Push knee and hip into wall, keep pelvis level.",
+        "Constraint: No pelvic drop or trunk side-bend."
+      ]
+    },
+    {
+      "id": "straight_arm_iso",
+      "label": "Straight-Arm Pulldown Iso",
+      "details": "30 sec \u00d7 2",
+      "equipment": "speediance",
+      "video": "https://www.youtube.com/watch?v=wcVDItawocI",
+      "durationSeconds": 30,
+      "sets": 2,
+      "restSeconds": 30,
+      "cues": [
+        "Setup: Arms slightly in front of body, elbows softly bent.",
+        "Execution: Pull to pockets and hold; ribs down, no back arch.",
+        "Constraint: No shrugging or elbow flare behind torso."
+      ]
+    },
+    {
+      "id": "neutral_curl_iso",
+      "label": "Neutral-Grip Curl Iso",
+      "details": "30 sec \u00d7 2",
+      "equipment": "speediance",
+      "video": "https://www.youtube.com/watch?v=ETMk1kUJmZw",
+      "durationSeconds": 30,
+      "sets": 2,
+      "restSeconds": 30,
+      "cues": [
+        "Setup: Elbows near sides, neutral grip, cable in front of body.",
+        "Execution: Hold 60\u201390\u00b0 elbow bend; keep wrist straight, no supination.",
+        "Constraint: Distal biceps pain \u2264 3/10, no sharp pulling at tendon."
+      ]
+    },
+    {
+      "id": "breathing",
+      "label": "2-Min Breathing / Down-Regulation",
+      "details": "2 min box breathing (4-4-4-4)",
+      "equipment": "bodyweight",
+      "video": "https://www.youtube.com/watch?v=VEskui8BYLE",
+      "durationSeconds": 120,
+      "sets": 1,
+      "restSeconds": 0
+    }
+  ],
+
+  "workouts": [
+    {
+      "id": "pull",
+      "name": "Day 1 \u2013 Pull + Posterior Shoulder",
+      "notes": "Focus on slow eccentrics and keeping elbows from over-traveling behind torso.",
+      "exercises": [
+        {
+          "id": "lat_pulldown",
+          "label": "Neutral Lat Pulldown",
+          "sets": 3,
+          "reps": "8 (3-sec eccentric)",
+          "equipment": "speediance",
+          "restSeconds": 60,
+          "cues": [
+            "Setup: Neutral grip, hands just outside shoulders.",
+            "Execution: Pull to upper chest, pause, 3-sec lower.",
+            "Constraint: Elbows stop slightly in front of torso, no swinging."
+          ]
+        },
+        {
+          "id": "one_arm_row",
+          "label": "Single-Arm Row (elbow stops at torso line)",
+          "sets": 3,
+          "reps": "10 each side",
+          "equipment": "speediance",
+          "restSeconds": 60,
+          "cues": [
+            "Setup: Hinge at hips, spine neutral, hand on bench or rack for support.",
+            "Execution: Row towards hip; elbow stops at torso line.",
+            "Constraint: No rotation through ribcage, no elbow behind torso."
+          ]
+        },
+        {
+          "id": "face_pull",
+          "label": "Face Pull",
+          "sets": 3,
+          "reps": "12",
+          "equipment": "speediance",
+          "restSeconds": 45,
+          "cues": [
+            "Setup: Rope at eye level, neutral/overhand grip.",
+            "Execution: Pull to nose/eyes, lead with elbows, squeeze mid-back.",
+            "Constraint: No lumbar extension; keep ribs stacked over pelvis."
+          ]
+        },
+        {
+          "id": "straight_arm_pulldown",
+          "label": "Straight-Arm Pulldown (eccentric focus)",
+          "sets": 3,
+          "reps": "8",
+          "equipment": "speediance",
+          "restSeconds": 45,
+          "cues": [
+            "Setup: Slight hip hinge, arms in front, elbows slightly bent.",
+            "Execution: Pull to pockets, 3-sec lower with control.",
+            "Constraint: No shrugging or rib flare."
+          ]
+        },
+        {
+          "id": "hammer_curl",
+          "label": "Hammer Curl (neutral grip)",
+          "sets": 2,
+          "reps": "12",
+          "equipment": "speediance",
+          "restSeconds": 45,
+          "cues": [
+            "Setup: Neutral grip, elbows close to sides.",
+            "Execution: Curl without swinging; think forearm vertical at top.",
+            "Constraint: No wrist flexion/extension; keep neck relaxed."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "push",
+      "name": "Day 2 \u2013 Push + Controlled Triceps",
+      "notes": "Keep pain \u22643/10 during, \u22642/10 next day.",
+      "exercises": [
+        {
+          "id": "incline_pushup",
+          "label": "Incline Push-Up Simulation (Speediance handles high)",
+          "sets": 3,
+          "reps": "10",
+          "equipment": "speediance",
+          "restSeconds": 60,
+          "cues": [
+            "Setup: Handles above mid-chest height, body in straight line.",
+            "Execution: Elbows ~30\u201345\u00b0 from torso, full lockout at top.",
+            "Constraint: No sharp anterior shoulder pain, no sagging hips."
+          ]
+        },
+        {
+          "id": "chest_press",
+          "label": "Chest Press (elbows tucked)",
+          "sets": 3,
+          "reps": "6\u20138",
+          "equipment": "speediance",
+          "restSeconds": 90,
+          "cues": [
+            "Setup: Bench or standing, handles at mid-chest.",
+            "Execution: Press with elbows slightly tucked, not flared.",
+            "Constraint: No bar/handle dropping below chest and no bounce."
+          ]
+        },
+        {
+          "id": "triceps_iso",
+          "label": "Rope Pressdown Isometric",
+          "sets": 3,
+          "reps": "20\u201330 sec holds",
+          "equipment": "speediance",
+          "restSeconds": 45,
+          "durationSeconds": 30,
+          "cues": [
+            "Setup: Elbows at sides, rope in neutral grip.",
+            "Execution: Extend to near lockout and hold; slight elbow bend.",
+            "Constraint: No shoulder roll-forward; no elbow drift behind body."
+          ]
+        },
+        {
+          "id": "reverse_triceps_ext",
+          "label": "Reverse Cable Triceps Extension (straight-arm bias)",
+          "sets": 2,
+          "reps": "12",
+          "equipment": "speediance",
+          "restSeconds": 45,
+          "cues": [
+            "Setup: Cable behind you, grip rope or handle with neutral/underhand.",
+            "Execution: Extend arm backward, focusing on long head of triceps.",
+            "Constraint: No reaching humerus too far behind body; shoulder stays centered."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "glute",
+      "name": "Day 3 \u2013 Glute Tendon Strength",
+      "notes": "No deep glute stretching. Prioritize controlled tempo.",
+      "exercises": [
+        {
+          "id": "sl_wall_hold",
+          "label": "Single-Leg Wall Hold (Right)",
+          "sets": 3,
+          "reps": "30 sec holds",
+          "equipment": "bodyweight",
+          "video": "https://www.youtube.com/watch?v=W8Vp7ueoWSs",
+          "durationSeconds": 30,
+          "restSeconds": 30,
+          "cues": [
+            "Setup: Right leg stance, right hip/knee to wall, left foot slightly out.",
+            "Execution: Drive hip and knee into wall, feel side glute working.",
+            "Constraint: No shifting weight into low back; pelvis stays level."
+          ]
+        },
+        {
+          "id": "hip_hike",
+          "label": "Cable Hip Hike (slow)",
+          "sets": 3,
+          "reps": "10",
+          "equipment": "speediance",
+          "restSeconds": 45,
+          "cues": [
+            "Setup: Cable on ankle of non-stance leg, stance leg on small step.",
+            "Execution: Drop and then hike pelvis slowly using stance-side glute.",
+            "Constraint: No side-bend through trunk; motion comes from pelvis."
+          ]
+        },
+        {
+          "id": "step_down",
+          "label": "Lateral Step-Down (slow eccentric)",
+          "sets": 3,
+          "reps": "8",
+          "equipment": "bodyweight",
+          "video": "https://www.youtube.com/watch?v=2x4jnXr8ykM",
+          "restSeconds": 45,
+          "cues": [
+            "Setup: Stand sideways on step, working leg near edge.",
+            "Execution: 3-sec lower to tap heel, then drive back up.",
+            "Constraint: Knee tracks over toes, no valgus collapse."
+          ]
+        },
+        {
+          "id": "belted_hip_thrust",
+          "label": "Belted Hip Thrust (Speediance \u2013 Hip Belt)",
+          "sets": 3,
+          "reps": "10",
+          "equipment": "speediance",
+          "restSeconds": 60,
+          "cues": [
+            "Setup: Cable low, hip belt at crease of hips, upper back on bench or box.",
+            "Execution: Drive hips up, squeeze glutes, 2-sec pause at lockout.",
+            "Constraint: No low-back arching; glutes do the work, pain \u2264 2/10."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "full_body",
+      "name": "Day 4 \u2013 Full-Body Strength Return",
+      "notes": "This is the bridge from rehab to fireground.",
+      "exercises": [
+        {
+          "id": "trap_bar_dl",
+          "label": "Trap-Bar Cable Deadlift",
+          "sets": 3,
+          "reps": "6",
+          "equipment": "speediance",
+          "restSeconds": 120,
+          "cues": [
+            "Setup: Feet hip-width, handles at mid-shin start.",
+            "Execution: Hinge hips back, push floor away, stand tall.",
+            "Constraint: No lumbar flexion; bar path stays over mid-foot."
+          ]
+        },
+        {
+          "id": "squat",
+          "label": "Squat",
+          "sets": 3,
+          "reps": "8",
+          "equipment": "speediance",
+          "restSeconds": 90,
+          "cues": [
+            "Setup: Feet shoulder-width, slight toe-out.",
+            "Execution: Sit between hips, keep chest up and knees tracking over toes.",
+            "Constraint: Depth only as tolerated without glute or knee spike."
+          ]
+        },
+        {
+          "id": "row",
+          "label": "Row (elbows tucked)",
+          "sets": 3,
+          "reps": "10",
+          "equipment": "speediance",
+          "restSeconds": 60,
+          "cues": [
+            "Setup: Neutral spine, handles low to mid-abdomen line.",
+            "Execution: Pull with elbows tucked, squeeze shoulder blades.",
+            "Constraint: No elbow behind torso; no shrugging."
+          ]
+        },
+        {
+          "id": "floor_pushup",
+          "label": "Floor Push-Up",
+          "sets": 2,
+          "reps": "8 (only when shoulder ok)",
+          "equipment": "bodyweight",
+          "restSeconds": 60,
+          "cues": [
+            "Setup: Hands under shoulders, body in straight line.",
+            "Execution: Lower with control, elbows ~30\u201345\u00b0 from torso.",
+            "Constraint: Stop if posterior shoulder pain > 3/10."
+          ]
+        },
+        {
+          "id": "hammer_curl_fb",
+          "label": "Hammer Curl",
+          "sets": 2,
+          "reps": "12",
+          "equipment": "speediance",
+          "restSeconds": 45,
+          "cues": [
+            "Setup: Neutral grip, elbows close to sides.",
+            "Execution: Curl without swinging, full control up and down.",
+            "Constraint: No distal biceps pain or aggressive stretch at bottom."
+          ]
+        }
+      ]
+    }
+  ],
+
+  "rotation": {
+    "1": "pull",
+    "2": "push",
+    "4": "glute",
+    "6": "full_body"
+  },
+
+  "painMetrics": [
+    { "id": "shoulder", "label": "Shoulder" },
+    { "id": "glute",    "label": "Glute (right)" },
+    { "id": "bicep",    "label": "Distal Biceps (left)" }
+  ]
+}

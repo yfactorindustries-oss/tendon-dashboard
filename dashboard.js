@@ -1079,34 +1079,59 @@ function renderWorkout() {
       loadRow = document.createElement('div');
       loadRow.className = 'load-row';
 
-      // Equipment selector checkbox
-      const equipToggle = document.createElement('label');
-      equipToggle.className = 'equipment-toggle';
-
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.className = 'equipment-checkbox';
-
-      // Get equipment preference from state (default to false = free weights)
+      // Equipment selector with two options
       const equipmentPrefs = state._global.equipmentPrefs || {};
       const useSpeediance = equipmentPrefs[ex.id] || false;
-      checkbox.checked = useSpeediance;
 
-      const label = document.createElement('span');
-      label.textContent = useSpeediance ? 'Speediance' : 'Free Weights';
+      // Free Weights option
+      const freeWeightsLabel = document.createElement('label');
+      freeWeightsLabel.className = 'equipment-option';
 
-      checkbox.onchange = () => {
-        const newPrefs = { ...equipmentPrefs, [ex.id]: checkbox.checked };
-        state._global.equipmentPrefs = newPrefs;
-        saveState();
-        label.textContent = checkbox.checked ? 'Speediance' : 'Free Weights';
-        // Re-render to update load value
-        renderWorkout();
+      const freeWeightsCheckbox = document.createElement('input');
+      freeWeightsCheckbox.type = 'checkbox';
+      freeWeightsCheckbox.className = 'equipment-checkbox';
+      freeWeightsCheckbox.checked = !useSpeediance;
+
+      const freeWeightsText = document.createElement('span');
+      freeWeightsText.textContent = 'Free Weights';
+
+      freeWeightsCheckbox.onchange = () => {
+        if (freeWeightsCheckbox.checked) {
+          const newPrefs = { ...equipmentPrefs, [ex.id]: false };
+          state._global.equipmentPrefs = newPrefs;
+          saveState();
+          renderWorkout();
+        }
       };
 
-      equipToggle.appendChild(checkbox);
-      equipToggle.appendChild(label);
-      loadRow.appendChild(equipToggle);
+      freeWeightsLabel.appendChild(freeWeightsCheckbox);
+      freeWeightsLabel.appendChild(freeWeightsText);
+      loadRow.appendChild(freeWeightsLabel);
+
+      // Speediance option
+      const speedianceLabel = document.createElement('label');
+      speedianceLabel.className = 'equipment-option';
+
+      const speedianceCheckbox = document.createElement('input');
+      speedianceCheckbox.type = 'checkbox';
+      speedianceCheckbox.className = 'equipment-checkbox';
+      speedianceCheckbox.checked = useSpeediance;
+
+      const speedianceText = document.createElement('span');
+      speedianceText.textContent = 'Speediance';
+
+      speedianceCheckbox.onchange = () => {
+        if (speedianceCheckbox.checked) {
+          const newPrefs = { ...equipmentPrefs, [ex.id]: true };
+          state._global.equipmentPrefs = newPrefs;
+          saveState();
+          renderWorkout();
+        }
+      };
+
+      speedianceLabel.appendChild(speedianceCheckbox);
+      speedianceLabel.appendChild(speedianceText);
+      loadRow.appendChild(speedianceLabel);
 
       // Load input
       const loadLabel = document.createElement('span');

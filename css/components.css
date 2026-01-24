@@ -474,7 +474,7 @@ input[type="checkbox"]:checked::after {
   flex-wrap: wrap;
 }
 
-.equipment-toggle {
+.equipment-option {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -487,7 +487,7 @@ input[type="checkbox"]:checked::after {
   transition: all var(--transition-base);
 }
 
-.equipment-toggle:hover {
+.equipment-option:hover {
   background: var(--color-surface-raised);
   border-color: var(--color-accent-primary);
 }
@@ -499,7 +499,7 @@ input[type="checkbox"]:checked::after {
   accent-color: var(--color-accent-primary);
 }
 
-.equipment-toggle span {
+.equipment-option span {
   font-size: var(--text-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);

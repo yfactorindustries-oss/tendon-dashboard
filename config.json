@@ -15,42 +15,60 @@
         {
           "id": "forearm_biceps",
           "label": "Forearms + Distal Biceps",
-          "details": "Soft tissue - 2 min continuous"
+          "details": "Soft tissue - 2 min continuous",
+          "durationSeconds": 120
         },
         {
           "id": "lats_pec",
           "label": "Lats + Pec Minor",
-          "details": "Soft tissue - 2 min continuous"
+          "details": "Soft tissue - 2 min continuous",
+          "durationSeconds": 120
         },
         {
           "id": "elbow_cars",
           "label": "Elbow CARs",
-          "details": "2 reps per side (slow, controlled)"
+          "details": "2 reps per side (slow, controlled)",
+          "sets": 2,
+          "reps": "2",
+          "restSeconds": 30
         },
         {
           "id": "shoulder_cars",
           "label": "Shoulder CARs",
-          "details": "2 reps per side (slow, controlled)"
+          "details": "2 reps per side (slow, controlled)",
+          "sets": 2,
+          "reps": "2",
+          "restSeconds": 30
         },
         {
           "id": "hip_cars",
           "label": "Hip CARs",
-          "details": "2 reps per side (slow, controlled)"
+          "details": "2 reps per side (slow, controlled)",
+          "sets": 2,
+          "reps": "2",
+          "restSeconds": 30
         },
         {
           "id": "ankle_dorsiflexion",
           "label": "Banded Ankle Dorsiflexion",
-          "details": "2×15 per side"
+          "details": "2×15 per side",
+          "sets": 2,
+          "reps": "15",
+          "restSeconds": 45
         },
         {
           "id": "tspine_openbooks",
           "label": "T-Spine Open Books",
-          "details": "1×5 per side"
+          "details": "1×5 per side",
+          "sets": 1,
+          "reps": "5",
+          "restSeconds": 0
         },
         {
           "id": "breathing",
           "label": "Crocodile or 90/90 Breathing",
-          "details": "2 min - Nasal inhale, 4-6 sec exhale"
+          "details": "2 min - Nasal inhale, 4-6 sec exhale",
+          "durationSeconds": 120
         }
       ],
 

@@ -665,6 +665,160 @@ function renderRehab() {
 
       label.appendChild(timerRow);
     }
+    // Duration only (no sets) - single countdown timer with pause/stop
+    else if (duration > 0 && sets === 0) {
+      const timerRow = document.createElement('div');
+      timerRow.className = 'timer-row';
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'timer-btn' + (rehabDone[item.id] ? ' done' : '');
+      btn.textContent = `Start ${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`;
+
+      const display = document.createElement('span');
+      display.className = 'timer-display';
+      if (rehabDone[item.id]) display.textContent = 'Done';
+
+      const pauseBtn = document.createElement('button');
+      pauseBtn.type = 'button';
+      pauseBtn.className = 'timer-btn';
+      pauseBtn.textContent = 'Pause';
+      pauseBtn.style.display = 'none';
+
+      const stopBtn = document.createElement('button');
+      stopBtn.type = 'button';
+      stopBtn.className = 'timer-btn';
+      stopBtn.textContent = 'Stop';
+      stopBtn.style.display = 'none';
+
+      let intervalId = null;
+      let remaining = duration;
+      let paused = false;
+
+      btn.onclick = () => {
+        if (rehabDone[item.id]) return;
+
+        btn.style.display = 'none';
+        pauseBtn.style.display = 'inline-block';
+        stopBtn.style.display = 'inline-block';
+
+        intervalId = setInterval(() => {
+          if (!paused) {
+            remaining -= 1;
+
+            if (remaining <= 0) {
+              clearInterval(intervalId);
+              btn.classList.add('done');
+              btn.style.display = 'inline-block';
+              btn.textContent = `Start ${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`;
+              pauseBtn.style.display = 'none';
+              stopBtn.style.display = 'none';
+              display.textContent = 'Done';
+
+              setTodayState({
+                rehabDone: { ...rehabDone, [item.id]: true }
+              });
+              updateTodayCompliance();
+              renderRehab();
+            } else {
+              const mins = Math.floor(remaining / 60);
+              const secs = remaining % 60;
+              display.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
+            }
+          }
+        }, 1000);
+      };
+
+      pauseBtn.onclick = () => {
+        paused = !paused;
+        pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+      };
+
+      stopBtn.onclick = () => {
+        clearInterval(intervalId);
+        remaining = duration;
+        paused = false;
+        btn.style.display = 'inline-block';
+        pauseBtn.style.display = 'none';
+        stopBtn.style.display = 'none';
+        pauseBtn.textContent = 'Pause';
+        display.textContent = '';
+      };
+
+      timerRow.appendChild(btn);
+      timerRow.appendChild(pauseBtn);
+      timerRow.appendChild(stopBtn);
+      timerRow.appendChild(display);
+      label.appendChild(timerRow);
+    }
+    // Sets with reps (no duration) - clickable set buttons with auto rest timer
+    else if (sets > 0 && duration === 0) {
+      const setState = rehabSetsDone[item.id] || {};
+      const setsRow = document.createElement('div');
+      setsRow.className = 'sets-row';
+
+      let restTimerId = null;
+      let restDisplay = null;
+
+      for (let i = 1; i <= sets; i++) {
+        const pill = document.createElement('div');
+        pill.className = 'set-pill' + (setState[i] ? ' done' : '');
+        pill.textContent = `Set ${i} • ${item.reps} reps`;
+
+        pill.onclick = () => {
+          if (setState[i] || restTimerId) return;
+
+          const newItemState = { ...setState, [i]: true };
+          const newRehabSetsDone = { ...rehabSetsDone, [item.id]: newItemState };
+
+          let allDone = true;
+          for (let s = 1; s <= sets; s++) {
+            if (!newItemState[s]) { allDone = false; break; }
+          }
+
+          const newRehabDone = {
+            ...rehabDone,
+            [item.id]: allDone ? true : rehabDone[item.id]
+          };
+
+          setTodayState({
+            rehabDone: newRehabDone,
+            rehabSetsDone: newRehabSetsDone
+          });
+
+          // Auto rest timer if not last set
+          if (i < sets && rest > 0) {
+            let restRemaining = rest;
+            if (!restDisplay) {
+              restDisplay = document.createElement('span');
+              restDisplay.className = 'timer-display';
+              restDisplay.style.marginLeft = '1rem';
+              setsRow.appendChild(restDisplay);
+            }
+
+            restDisplay.textContent = `Rest ${restRemaining}s`;
+
+            restTimerId = setInterval(() => {
+              restRemaining -= 1;
+              if (restRemaining <= 0) {
+                clearInterval(restTimerId);
+                restTimerId = null;
+                if (restDisplay) restDisplay.textContent = '';
+              } else {
+                restDisplay.textContent = `Rest ${restRemaining}s`;
+              }
+            }, 1000);
+          }
+
+          updateTodayCompliance();
+          renderRehab();
+        };
+
+        setsRow.appendChild(pill);
+      }
+
+      label.appendChild(setsRow);
+    }
 
     row.appendChild(cb);
     row.appendChild(label);

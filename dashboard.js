@@ -92,7 +92,6 @@ function getTodayState() {
       compliance: {
         rehabFullyCompleted: false,
         workoutFullyCompleted: false,
-        painLogged: false,
         dailyComplianceScore: 0
       }
     };
@@ -115,7 +114,6 @@ function getTodayState() {
       state[todayStr].compliance = {
         rehabFullyCompleted: false,
         workoutFullyCompleted: false,
-        painLogged: false,
         dailyComplianceScore: 0
       };
     }
@@ -190,7 +188,7 @@ function formatSeconds(sec) {
 function computeDayCompliance(dateStr) {
   const dayState = state[dateStr];
   if (!dayState) {
-    return { date: dateStr, score: 0, rehab: false, workout: false, pain: false };
+    return { date: dateStr, score: 0, rehab: false, workout: false };
   }
 
   // Use existing compliance data if available
@@ -199,8 +197,7 @@ function computeDayCompliance(dateStr) {
       date: dateStr,
       score: dayState.compliance.dailyComplianceScore,
       rehab: dayState.compliance.rehabFullyCompleted,
-      workout: dayState.compliance.workoutFullyCompleted,
-      pain: dayState.compliance.painLogged
+      workout: dayState.compliance.workoutFullyCompleted
     };
   }
 
@@ -226,20 +223,14 @@ function computeDayCompliance(dateStr) {
     workoutScore = workoutExpected > 0 ? (workoutCompleted / workoutExpected) * 100 : 100;
   }
 
-  // Pain logging (partial credit)
-  const painMetrics = appConfig.painMetrics || [];
-  const painLogged = Object.keys(pain).length;
-  const painScore = painMetrics.length > 0 ? (painLogged / painMetrics.length) * 100 : 0;
-
-  // Weighted score: 40% rehab, 50% workout, 10% pain
-  const totalScore = Math.round(rehabScore * 0.4 + workoutScore * 0.5 + painScore * 0.1);
+  // Weighted score: 50% rehab, 50% workout
+  const totalScore = Math.round(rehabScore * 0.5 + workoutScore * 0.5);
 
   return {
     date: dateStr,
     score: totalScore,
     rehab: rehabScore === 100,
-    workout: workoutScore === 100,
-    pain: painScore > 0
+    workout: workoutScore === 100
   };
 }
 
@@ -250,7 +241,6 @@ function updateTodayCompliance() {
     compliance: {
       rehabFullyCompleted: compliance.rehab,
       workoutFullyCompleted: compliance.workout,
-      painLogged: compliance.pain,
       dailyComplianceScore: compliance.score
     }
   });
@@ -263,35 +253,6 @@ function getWorkoutForDate(dateStr) {
   const workouts = appConfig.workouts || [];
   const workout = workouts.find(w => w.days && w.days.includes(dayOfWeek));
   return workout || null;
-}
-
-function createCueElements(cues) {
-  if (!cues || !cues.length) return null;
-
-  const toggle = document.createElement('button');
-  toggle.type = 'button';
-  toggle.className = 'cue-toggle';
-  toggle.textContent = 'Show cues';
-
-  const panel = document.createElement('div');
-  panel.className = 'cue-panel';
-
-  const list = document.createElement('ul');
-  cues.forEach(line => {
-    const li = document.createElement('li');
-    li.textContent = line;
-    list.appendChild(li);
-  });
-  panel.appendChild(list);
-
-  let open = false;
-  toggle.onclick = () => {
-    open = !open;
-    panel.style.display = open ? 'block' : 'none';
-    toggle.textContent = open ? 'Hide cues' : 'Show cues';
-  };
-
-  return { toggle, panel };
 }
 
 // ------------ Analytics ------------
@@ -622,15 +583,6 @@ function renderRehab() {
     label.appendChild(titleRow);
     if (item.details) label.appendChild(meta);
 
-    // Rehab cues only where needed
-    if (item.cues && item.cues.length) {
-      const cueElems = createCueElements(item.cues);
-      if (cueElems) {
-        label.appendChild(cueElems.toggle);
-        label.appendChild(cueElems.panel);
-      }
-    }
-
     const sets = item.sets && item.sets > 0 ? item.sets : 0;
     const duration = item.durationSeconds && item.durationSeconds > 0 ? item.durationSeconds : 0;
     const rest = item.restSeconds && item.restSeconds > 0 ? item.restSeconds : 0;
@@ -827,15 +779,6 @@ function renderWorkout() {
     const isoRest = ex.restSeconds && ex.restSeconds > 0 ? ex.restSeconds : 0;
     const isIso = isoSets > 0 && isoDuration > 0;
 
-    // Cue panel for all strength movements
-    if (ex.cues && ex.cues.length) {
-      const cueElems = createCueElements(ex.cues);
-      if (cueElems) {
-        ex._cueToggle = cueElems.toggle;
-        ex._cuePanel = cueElems.panel;
-      }
-    }
-
     // Sets row (non-iso only)
     let setsRow = null;
     if (!isIso) {
@@ -997,11 +940,6 @@ function renderWorkout() {
     wrapper.appendChild(titleRow);
     wrapper.appendChild(metaRow);
 
-    if (ex._cueToggle && ex._cuePanel) {
-      wrapper.appendChild(ex._cueToggle);
-      wrapper.appendChild(ex._cuePanel);
-    }
-
     if (setsRow) wrapper.appendChild(setsRow);
     if (loadRow) wrapper.appendChild(loadRow);
     if (isoRow) wrapper.appendChild(isoRow);
@@ -1092,82 +1030,10 @@ function setupSessionNotes() {
 
 // ------------ Pain / readiness ------------
 
-function renderPain() {
-  const grid = document.getElementById('painGrid');
-  const readinessEl = document.getElementById('readinessText');
-  grid.innerHTML = '';
-
-  const todayState = getTodayState();
-  const pain = todayState.pain || {};
-  const metrics = appConfig.painMetrics || [];
-
-  let sum = 0;
-  let count = 0;
-
-  metrics.forEach(m => {
-    const item = document.createElement('div');
-    item.className = 'pain-item';
-
-    const label = document.createElement('label');
-    label.textContent = m.label;
-
-    const input = document.createElement('input');
-    input.type = 'number';
-    input.min = '0';
-    input.max = '10';
-    input.step = '1';
-    input.value = pain[m.id] ?? '';
-    input.onchange = () => {
-      const val = input.value === '' ? null : Math.max(0, Math.min(10, Number(input.value)));
-      const newPain = { ...pain, [m.id]: val };
-      setTodayState({ pain: newPain });
-      updateTodayCompliance();
-      renderPain();
-    };
-
-    if (typeof pain[m.id] === 'number') {
-      sum += pain[m.id];
-      count++;
-    }
-
-    item.appendChild(label);
-    item.appendChild(input);
-    grid.appendChild(item);
-  });
-
-  if (!metrics.length) {
-    readinessEl.textContent = '';
-    return;
-  }
-
-  if (count === 0) {
-    readinessEl.textContent = 'Log pain to compute readiness.';
-    return;
-  }
-
-  const avg = sum / count;
-  let cls = 'green';
-  let text = '';
-
-  if (avg <= 3) {
-    cls = 'green';
-    text = 'Ready: Green – full session OK.';
-  } else if (avg <= 6) {
-    cls = 'yellow';
-    text = 'Ready: Yellow – keep loads moderate.';
-  } else {
-    cls = 'red';
-    text = 'Ready: Red – dial back intensity.';
-  }
-
-  readinessEl.innerHTML = `<span class="status-dot ${cls}"></span>${text}`;
-}
-
 function renderAll() {
   renderDate();
   renderRehab();
   renderWorkout();
-  renderPain();
   renderAnalytics();
 }
 

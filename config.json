@@ -1,6 +1,6 @@
 {
-  "programName": "Firefighter Long-Career Training",
-  "notes": "Primary goals: Career longevity (8+ years), joint/tendon durability, firefighter-specific work capacity.",
+  "programName": "Firefighter Long-Career Training System",
+  "notes": "1-Year Program (Shift-Work Compatible). Primary goals: Career longevity (8+ years), aerobic robustness under load, joint/tendon durability.",
 
   "blocks": [
     {
@@ -9,494 +9,256 @@
       "startDate": "2026-01-20",
       "endDate": "2026-04-13",
       "weekRange": "Weeks 1-12",
-      "notes": "Main lifts never exceed RPE 7-8.",
+      "notes": "Aerobic duration increases first, accessory volume second, load last. Main lifts capped at RPE 7-8.",
 
       "dailyRehab": [
         {
-          "id": "forearm_release",
-          "label": "Forearm & Distal Biceps Release",
-          "details": "Soft tissue work - 2 minutes",
-          "cues": [
-            "Use lacrosse ball or roller",
-            "Focus on flexor/pronator mass",
-            "Gentle pressure - no pain >5/10",
-            "Long slow strokes"
-          ]
+          "id": "forearm_biceps",
+          "label": "Forearms + Distal Biceps",
+          "details": "Soft tissue - 2 min continuous"
         },
         {
-          "id": "lat_pec_release",
-          "label": "Lat & Pec Minor Release",
-          "details": "Soft tissue work - 2 minutes",
-          "cues": [
-            "Lacrosse ball on wall or floor",
-            "Find tender spots and breathe",
-            "Pec minor: just below collarbone",
-            "Lats: armpit area and mid-back"
-          ]
+          "id": "lats_pec",
+          "label": "Lats + Pec Minor",
+          "details": "Soft tissue - 2 min continuous"
         },
         {
           "id": "elbow_cars",
           "label": "Elbow CARs",
-          "details": "2 slow reps per side",
-          "cues": [
-            "Controlled Articular Rotations",
-            "Full range, slow and smooth",
-            "Flexion → Extension → Pronation → Supination",
-            "Pain-free movement only"
-          ]
+          "details": "2 reps per side (slow, controlled)"
         },
         {
           "id": "shoulder_cars",
           "label": "Shoulder CARs",
-          "details": "2 slow reps per side",
-          "cues": [
-            "Full body tension except working shoulder",
-            "Maximum range of motion",
-            "Slow and controlled (20-30 sec per rep)",
-            "Flexion → Abduction → Extension circle"
-          ]
+          "details": "2 reps per side (slow, controlled)"
         },
         {
           "id": "hip_cars",
           "label": "Hip CARs",
-          "details": "2 slow reps per side",
-          "cues": [
-            "Standing or side-lying",
-            "Pelvis and spine stable",
-            "Flexion → Abduction → Extension → Adduction",
-            "Control the entire range"
-          ]
+          "details": "2 reps per side (slow, controlled)"
         },
         {
           "id": "ankle_dorsiflexion",
           "label": "Banded Ankle Dorsiflexion",
-          "details": "2×15 reps",
-          "sets": 2,
-          "cues": [
-            "Band around ankle, anchored behind",
-            "Drive knee forward over toes",
-            "Heel stays down",
-            "2-second hold at end range"
-          ]
+          "details": "2×15 per side"
         },
         {
           "id": "tspine_openbooks",
           "label": "T-Spine Open Books",
-          "details": "5 reps per side",
-          "cues": [
-            "Side-lying, knees bent at 90°",
-            "Top arm sweeps open like a book",
-            "Follow hand with eyes",
-            "Exhale as you rotate"
-          ]
+          "details": "1×5 per side"
         },
         {
           "id": "breathing",
           "label": "Crocodile or 90/90 Breathing",
-          "details": "2 minutes - nasal only",
-          "cues": [
-            "Crocodile: face down, forehead on hands",
-            "Or 90/90: on back, feet elevated on box",
-            "Belly expands on inhale",
-            "Long exhales (4-6 seconds)",
-            "Nasal breathing only"
-          ]
+          "details": "2 min - Nasal inhale, 4-6 sec exhale"
         }
       ],
 
       "workouts": [
         {
-          "id": "lower_strength_aerobic",
-          "name": "Lower Strength + Aerobic Base",
+          "id": "unit_a",
+          "name": "Unit A - Lower Strength + Short Aerobic",
           "days": [1],
-          "notes": "Main lifts @ RPE 6-7. Finish with Zone 2 conditioning.",
+          "notes": "Main lifts RPE 6-7",
           "exercises": [
             {
               "id": "squat",
-              "label": "Squat (Goblet or Back Squat)",
+              "label": "Squat",
               "sets": 5,
               "reps": "5",
-              "equipment": "speediance",
-              "cues": [
-                "RPE 6-7 max",
-                "Braced core throughout",
-                "Depth: parallel or slightly below",
-                "3-second descent, explode up",
-                "Rest 2-3 min between sets"
-              ]
+              "notes": "RPE 6-7, Controlled eccentric, Rest 2-3 min",
+              "equipment": "speediance"
             },
             {
               "id": "reverse_lunge",
               "label": "Reverse Lunge",
               "sets": 3,
-              "reps": "8 each side",
-              "cues": [
-                "Back knee just touches ground",
-                "Front shin vertical",
-                "Drive through front heel",
-                "Controlled descent"
-              ]
+              "reps": "8/side",
+              "notes": "Rest 90 sec"
             },
             {
               "id": "sl_rdl",
               "label": "Single-Leg RDL",
               "sets": 3,
-              "reps": "10 each side",
-              "cues": [
-                "Hinge at hip, not spine",
-                "Slight knee bend",
-                "Back stays flat",
-                "Feel stretch in hamstring",
-                "Non-working leg extends behind"
-              ]
+              "reps": "10",
+              "notes": "Rest 90 sec"
             },
             {
               "id": "rfess",
               "label": "Rear-Foot Elevated Split Squat",
               "sets": 3,
-              "reps": "10 each side",
-              "cues": [
-                "3-second eccentric (slow down)",
-                "Torso upright",
-                "Front knee tracks over toes",
-                "Back foot on bench or box"
-              ]
+              "reps": "10/side",
+              "notes": "3-sec eccentric, Rest 90 sec"
             },
             {
               "id": "ham_curl",
               "label": "Hamstring Curl",
               "sets": 3,
               "reps": "12-15",
-              "equipment": "speediance",
-              "cues": [
-                "Control both phases",
-                "Hips stay flat on pad",
-                "Full range of motion",
-                "Squeeze at top"
-              ]
+              "notes": "Rest 60-90 sec",
+              "equipment": "speediance"
             },
             {
-              "id": "zone2_conditioning",
-              "label": "Zone 2 Conditioning",
-              "details": "30-45 minutes - nasal breathing only",
-              "cues": [
-                "Walk, bike, row, or swim",
-                "Nasal breathing ONLY - if you need to mouth breathe, slow down",
-                "Should be able to hold conversation",
-                "Heart rate ~120-140 bpm (adjust for age)",
-                "Consistency over intensity"
-              ]
+              "id": "aerobic",
+              "label": "Zone 2 Aerobic",
+              "details": "20-30 min - Walk, bike, or incline treadmill. Nasal breathing only."
             }
           ]
         },
         {
-          "id": "upper_strength_arms",
-          "name": "Upper Strength + Arms (Elbow Smart)",
+          "id": "unit_b",
+          "name": "Unit B - Upper Strength + Aerobic Recovery",
           "days": [2],
-          "notes": "Elbow health is priority. Stop if any sharp pain.",
+          "notes": "Elbow health prioritized",
           "exercises": [
             {
               "id": "neutral_press",
               "label": "Neutral-Grip Press",
               "sets": 4,
               "reps": "6",
-              "equipment": "speediance",
-              "cues": [
-                "RPE 6-7 max",
-                "Dumbbells or neutral-grip bar",
-                "Shoulders packed and stable",
-                "Full lockout at top",
-                "Rest 2-3 min"
-              ]
+              "notes": "RPE 6-7, Rest 2 min",
+              "equipment": "speediance"
             },
             {
               "id": "chest_row",
               "label": "Chest-Supported Row",
               "sets": 4,
               "reps": "10",
-              "equipment": "speediance",
-              "cues": [
-                "Chest flat on incline bench",
-                "Pull to lower ribs",
-                "Squeeze shoulder blades",
-                "No momentum",
-                "2-second hold at top"
-              ]
-            },
-            {
-              "id": "face_pulls",
-              "label": "Face Pulls",
-              "sets": 3,
-              "reps": "15",
-              "equipment": "speediance",
-              "cues": [
-                "Rope or handles to face level",
-                "External rotation at end",
-                "Shoulders down and back",
-                "Control eccentric"
-              ]
-            },
-            {
-              "id": "offset_carry",
-              "label": "Offset Carry",
-              "sets": 3,
-              "reps": "30m each side",
-              "cues": [
-                "Heavy weight in one hand",
-                "Walk 30m, switch hands",
-                "Stay tall - resist side bend",
-                "Shoulders level",
-                "Breathe normally"
-              ]
+              "notes": "Rest 90 sec",
+              "equipment": "speediance"
             },
             {
               "id": "incline_curl",
               "label": "Incline DB Curl",
               "sets": 3,
               "reps": "12-15",
-              "cues": [
-                "Incline bench 45-60°",
-                "Let arms hang fully extended",
-                "Supinate (turn palm up) as you curl",
-                "No elbow pain - reduce weight if needed",
-                "Controlled eccentric (3 seconds)"
-              ]
+              "notes": "Slow eccentric, Rest 60-90 sec"
             },
             {
               "id": "hammer_curl",
               "label": "Hammer Curl",
               "sets": 3,
               "reps": "10",
-              "cues": [
-                "Neutral grip (thumbs up)",
-                "Elbows stay fixed at sides",
-                "Slower tempo",
-                "Brachialis and brachioradialis focus"
-              ]
+              "notes": "Rest 60-90 sec"
+            },
+            {
+              "id": "supinated_iso",
+              "label": "Supinated DB Isometric Hold @ 90°",
+              "sets": 3,
+              "durationSeconds": 30,
+              "notes": "30 sec per side, Rest 60 sec"
             },
             {
               "id": "triceps_pressdown",
               "label": "Triceps Pressdown",
               "sets": 3,
               "reps": "12-15",
-              "equipment": "speediance",
-              "cues": [
-                "Rope or straight bar",
-                "Elbows pinned to sides",
-                "Full extension at bottom",
-                "No elbow flare"
-              ]
+              "notes": "Rest 60-90 sec",
+              "equipment": "speediance"
             },
             {
-              "id": "supinated_iso_hold",
-              "label": "Supinated DB Isometric Hold @ 90°",
-              "sets": 3,
-              "durationSeconds": 30,
-              "cues": [
-                "Light dumbbell (10-20% of curl max)",
-                "Palm up, elbow at 90°",
-                "Hold 30 seconds",
-                "Distal biceps tendon loading",
-                "Stop if sharp pain"
-              ]
+              "id": "aerobic_recovery",
+              "label": "Aerobic Recovery",
+              "details": "25-35 min - Easy bike, row, or walk. Conversational pace, nasal breathing."
             }
           ]
         },
         {
-          "id": "loaded_movement_core",
-          "name": "Loaded Movement + Core",
+          "id": "unit_c",
+          "name": "Unit C - Loaded Aerobic + Core",
           "days": [3],
-          "notes": "Low-intensity, long-duration work. Nasal breathing only.",
+          "notes": "Nasal breathing only",
           "exercises": [
             {
               "id": "loaded_walk",
-              "label": "Loaded Walk (Vest or Ruck)",
-              "details": "30-45 min @ 40-60 lb - nasal breathing",
-              "cues": [
-                "Weight vest or rucksack",
-                "40-60 lb total",
-                "Nasal breathing ONLY",
-                "Should be able to talk",
-                "Upright posture",
-                "Outdoors if possible"
-              ]
+              "label": "Loaded Walk",
+              "details": "30-45 min @ 40-60 lb vest/pack. Continuous steady pace, nasal breathing only."
             },
             {
               "id": "dead_bug",
               "label": "Dead Bug",
               "sets": 3,
               "reps": "10",
-              "cues": [
-                "Lay on back, knees at 90°",
-                "Lower back pressed to floor",
-                "Opposite arm and leg extend",
-                "Slow and controlled",
-                "Exhale as you extend"
-              ]
+              "notes": "Rest 30-45 sec"
             },
             {
               "id": "side_plank",
               "label": "Side Plank",
               "sets": 3,
               "durationSeconds": 45,
-              "cues": [
-                "45 seconds per side",
-                "Elbow under shoulder",
-                "Hips high - no sag",
-                "Top arm extended to ceiling",
-                "Breathe normally"
-              ]
+              "notes": "45 sec per side, Rest 30 sec"
             },
             {
               "id": "suitcase_carry",
               "label": "Suitcase Carry",
               "sets": 4,
-              "reps": "40m each side",
-              "cues": [
-                "Heavy KB or DB in one hand",
-                "Walk 40m, switch",
-                "Resist lateral flexion",
-                "Shoulders level",
-                "Stand tall"
-              ]
+              "reps": "40m/side",
+              "notes": "Rest 60-90 sec"
             },
             {
-              "id": "pallof_press_hold",
+              "id": "pallof_press",
               "label": "Pallof Press Hold",
               "sets": 3,
               "durationSeconds": 30,
-              "cues": [
-                "Band or cable at chest height",
-                "Press away from anchor",
-                "Hold extended position 30 sec",
-                "Resist rotation",
-                "Both sides"
-              ]
+              "notes": "30 sec per side, Rest 45-60 sec"
             }
           ]
         },
         {
-          "id": "hinge_power",
-          "name": "Hinge + Safe Power",
+          "id": "unit_d",
+          "name": "Unit D - Hinge + Short Conditional Aerobic",
           "days": [4],
-          "notes": "Main lift @ RPE 6-7. Power work is explosive but controlled.",
+          "notes": "Main lift RPE 6-7",
           "exercises": [
             {
               "id": "trap_bar_deadlift",
               "label": "Trap Bar Deadlift",
               "sets": 4,
               "reps": "3",
-              "equipment": "speediance",
-              "cues": [
-                "RPE 6-7 max",
-                "High handles if available",
-                "Neutral spine throughout",
-                "Drive through heels",
-                "Rest 2-3 min between sets"
-              ]
+              "notes": "RPE 6-7, Smooth no hitch, Rest 2-3 min",
+              "equipment": "speediance"
             },
             {
-              "id": "loaded_step_ups",
+              "id": "step_ups",
               "label": "Step-Ups (Loaded)",
               "sets": 3,
-              "reps": "8 each side",
-              "cues": [
-                "Box at knee height",
-                "Drive through heel of elevated foot",
-                "Full hip extension at top",
-                "Control descent",
-                "No push from bottom foot"
-              ]
+              "reps": "8/side",
+              "notes": "Rest 90 sec"
             },
             {
-              "id": "ham_curl_hinge",
+              "id": "ham_curl_d",
               "label": "Hamstring Curl",
               "sets": 3,
               "reps": "8-10",
-              "equipment": "speediance",
-              "cues": [
-                "Lying or seated",
-                "Slow eccentric (3 seconds)",
-                "Full range of motion",
-                "Hips stay stable"
-              ]
+              "notes": "Rest 60-90 sec",
+              "equipment": "speediance"
             },
             {
-              "id": "sled_push",
-              "label": "Sled Push",
-              "sets": 6,
-              "reps": "20m",
-              "cues": [
-                "Moderate load - sustainable",
-                "Low handles, torso at 45°",
-                "Drive through balls of feet",
-                "Full extension at hips",
-                "Rest 90 sec between sets"
-              ]
-            },
-            {
-              "id": "medball_scoop",
-              "label": "Med Ball Scoop Toss (Alternative)",
-              "sets": 4,
-              "reps": "5",
-              "cues": [
-                "Use instead of sled if unavailable",
-                "10-20 lb medicine ball",
-                "Scoop from ground, toss overhead",
-                "Explosive hip extension",
-                "Let ball drop - no catching overhead"
-              ]
+              "id": "short_aerobic",
+              "label": "Short Aerobic (Choose One)",
+              "details": "Option 1: Sled Push 6-10×20m | Option 2: Bike 6×2min moderate/2min easy | Option 3: Step-Up 10min continuous"
             }
           ]
         },
         {
-          "id": "recovery_aerobic",
-          "name": "Long Easy + Mobility (Optional)",
+          "id": "unit_e",
+          "name": "Unit E - Long Easy + Mobility (Optional)",
           "days": [5],
-          "notes": "Optional recovery day. Nasal breathing only.",
+          "notes": "Recovery day",
           "exercises": [
             {
               "id": "long_easy",
-              "label": "Long Easy Session",
-              "details": "45-75 min - walk, hike, or bike",
-              "cues": [
-                "Nasal breathing ONLY",
-                "Should be very easy - able to talk",
-                "Outdoors preferred",
-                "Zone 1-2 effort",
-                "Enjoy the process"
-              ]
+              "label": "Long Easy Aerobic",
+              "details": "45-75 min - Walk, hike, or bike. Easy, nasal breathing."
             },
             {
-              "id": "long_mobility",
-              "label": "Long Mobility Session",
-              "details": "20-30 minutes",
-              "cues": [
-                "Focus on tight areas",
-                "Hip flexors, thoracic spine, ankles",
-                "Slow controlled movements",
-                "Breathwork integrated",
-                "No forcing or pain"
-              ]
+              "id": "extended_mobility",
+              "label": "Extended Mobility",
+              "details": "20-30 min - Focus: Hips, T-spine, forearms"
             }
           ]
         }
       ]
-    }
-  ],
-
-  "painMetrics": [
-    {
-      "id": "elbow",
-      "label": "Elbow (Distal Biceps)"
-    },
-    {
-      "id": "shoulder",
-      "label": "Shoulder"
-    },
-    {
-      "id": "lower_back",
-      "label": "Lower Back"
     }
   ]
 }

@@ -1010,7 +1010,7 @@ function renderWorkout() {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'timer-btn' + (isoState[i] ? ' done' : '');
-        btn.textContent = `Set ${i} • ${isoDuration}s`;
+        btn.textContent = `Set ${i} • Reset`;
 
         const display = document.createElement('span');
         display.className = 'timer-display';
@@ -1020,69 +1020,107 @@ function renderWorkout() {
         let isPaused = false;
         let phase = 'hold';
         let remaining = isoDuration;
+        let isRunning = false;
+
+        // Create pause button
+        const pauseBtn = document.createElement('button');
+        pauseBtn.type = 'button';
+        pauseBtn.className = 'timer-control-btn';
+        pauseBtn.textContent = 'Pause';
+        pauseBtn.style.display = 'none';
+
+        // Create reset button
+        const stopBtn = document.createElement('button');
+        stopBtn.type = 'button';
+        stopBtn.className = 'timer-control-btn';
+        stopBtn.textContent = 'Reset';
+        stopBtn.style.display = 'none';
 
         btn.onclick = () => {
           if (isoState[i]) return;
 
-          // If timer is running, pause it
-          if (timerId && !isPaused) {
-            isPaused = true;
-            clearInterval(timerId);
-            timerId = null;
-            btn.textContent = 'Resume';
-            return;
-          }
-
-          // If paused, resume it
-          if (isPaused) {
-            isPaused = false;
-            btn.textContent = `Set ${i} • Pause`;
+          // If timer is running or paused, this acts as resume
+          if (isRunning || isPaused) {
+            // Resume from pause
+            if (isPaused) {
+              isPaused = false;
+              pauseBtn.textContent = 'Pause';
+            }
           } else {
             // Starting fresh
             activeTimer = true;
+            isRunning = true;
             phase = 'hold';
             remaining = isoDuration;
-            btn.textContent = `Set ${i} • Pause`;
+            pauseBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'inline-block';
           }
 
           display.textContent = `Hold ${formatSeconds(remaining)}`;
 
           timerId = setInterval(() => {
-            remaining -= 1;
+            if (!isPaused) {
+              remaining -= 1;
 
-            if (remaining <= 0) {
-              if (phase === 'hold' && isoRest > 0) {
-                phase = 'rest';
-                remaining = isoRest;
-                display.textContent = `Rest ${formatSeconds(remaining)}`;
-                return;
+              if (remaining <= 0) {
+                if (phase === 'hold' && isoRest > 0) {
+                  phase = 'rest';
+                  remaining = isoRest;
+                  display.textContent = `Rest ${formatSeconds(remaining)}`;
+                  return;
+                } else {
+                  clearInterval(timerId);
+                  timerId = null;
+                  isRunning = false;
+                  btn.disabled = false;
+                  btn.classList.add('done');
+                  display.textContent = 'Done';
+                  pauseBtn.style.display = 'none';
+                  stopBtn.style.display = 'none';
+
+                  const newIsoState = { ...isoState, [i]: true };
+                  const newWorkoutIsoSets = { ...workoutIsoSets, [ex.id]: newIsoState };
+                  setTodayState({ workoutIsoSets: newWorkoutIsoSets });
+
+                  activeTimer = false;
+                  isPaused = false;
+                  renderWorkout();
+                }
               } else {
-                clearInterval(timerId);
-                timerId = null;
-                btn.disabled = false;
-                btn.classList.add('done');
-                btn.textContent = `Set ${i} • ${isoDuration}s`;
-                display.textContent = 'Done';
-
-                const newIsoState = { ...isoState, [i]: true };
-                const newWorkoutIsoSets = { ...workoutIsoSets, [ex.id]: newIsoState };
-                setTodayState({ workoutIsoSets: newWorkoutIsoSets });
-
-                activeTimer = false;
-                isPaused = false;
-                renderWorkout();
+                display.textContent =
+                  (phase === 'hold'
+                    ? `Hold ${formatSeconds(remaining)}`
+                    : `Rest ${formatSeconds(remaining)}`);
               }
-            } else {
-              display.textContent =
-                (phase === 'hold'
-                  ? `Hold ${formatSeconds(remaining)}`
-                  : `Rest ${formatSeconds(remaining)}`);
             }
           }, 1000);
         };
 
+        pauseBtn.onclick = () => {
+          isPaused = !isPaused;
+          pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+        };
+
+        stopBtn.onclick = () => {
+          if (timerId) {
+            clearInterval(timerId);
+            timerId = null;
+          }
+          isRunning = false;
+          isPaused = false;
+          phase = 'hold';
+          remaining = isoDuration;
+          display.textContent = '';
+          pauseBtn.style.display = 'none';
+          stopBtn.style.display = 'none';
+          pauseBtn.textContent = 'Pause';
+          activeTimer = false;
+        };
+
         isoRow.appendChild(btn);
         isoRow.appendChild(display);
+        isoRow.appendChild(pauseBtn);
+        isoRow.appendChild(stopBtn);
       }
     }
 

@@ -441,6 +441,25 @@ input[type="checkbox"]:checked::after {
   color: var(--color-text-primary);
 }
 
+.timer-control-btn {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-medium);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-xs);
+  background: var(--color-bg-tertiary);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-base);
+  margin-left: var(--space-xs);
+}
+
+.timer-control-btn:hover {
+  border-color: var(--color-accent-primary);
+  background: var(--color-surface-raised);
+  transform: translateY(-1px);
+}
+
 /* ============================================
    LOAD INPUT
    ============================================ */

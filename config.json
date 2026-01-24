@@ -92,21 +92,24 @@
               "label": "Reverse Lunge",
               "sets": 3,
               "reps": "8/side",
-              "notes": "Rest 90 sec"
+              "notes": "Rest 90 sec",
+              "equipmentChoice": true
             },
             {
               "id": "sl_rdl",
               "label": "Single-Leg RDL",
               "sets": 3,
               "reps": "10",
-              "notes": "Rest 90 sec"
+              "notes": "Rest 90 sec",
+              "equipmentChoice": true
             },
             {
               "id": "rfess",
               "label": "Rear-Foot Elevated Split Squat",
               "sets": 3,
               "reps": "10/side",
-              "notes": "3-sec eccentric, Rest 90 sec"
+              "notes": "3-sec eccentric, Rest 90 sec",
+              "equipmentChoice": true
             },
             {
               "id": "ham_curl",
@@ -150,21 +153,24 @@
               "label": "Incline DB Curl",
               "sets": 3,
               "reps": "12-15",
-              "notes": "Slow eccentric, Rest 60-90 sec"
+              "notes": "Slow eccentric, Rest 60-90 sec",
+              "equipmentChoice": true
             },
             {
               "id": "hammer_curl",
               "label": "Hammer Curl",
               "sets": 3,
               "reps": "10",
-              "notes": "Rest 60-90 sec"
+              "notes": "Rest 60-90 sec",
+              "equipmentChoice": true
             },
             {
               "id": "supinated_iso",
               "label": "Supinated DB Isometric Hold @ 90°",
               "sets": 3,
               "durationSeconds": 30,
-              "notes": "30 sec per side, Rest 60 sec"
+              "notes": "30 sec per side, Rest 60 sec",
+              "equipmentChoice": true
             },
             {
               "id": "triceps_pressdown",
@@ -211,14 +217,16 @@
               "label": "Suitcase Carry",
               "sets": 4,
               "reps": "40m/side",
-              "notes": "Rest 60-90 sec"
+              "notes": "Rest 60-90 sec",
+              "equipmentChoice": true
             },
             {
               "id": "pallof_press",
               "label": "Pallof Press Hold",
               "sets": 3,
               "durationSeconds": 30,
-              "notes": "30 sec per side, Rest 45-60 sec"
+              "notes": "30 sec per side, Rest 45-60 sec",
+              "equipmentChoice": true
             }
           ]
         },
@@ -241,7 +249,8 @@
               "label": "Step-Ups (Loaded)",
               "sets": 3,
               "reps": "8/side",
-              "notes": "Rest 90 sec"
+              "notes": "Rest 90 sec",
+              "equipmentChoice": true
             },
             {
               "id": "ham_curl_d",

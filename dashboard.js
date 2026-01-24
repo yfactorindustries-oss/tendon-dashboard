@@ -1073,11 +1073,44 @@ function renderWorkout() {
       }
     }
 
-    // Load row (Speediance only, with global memory)
+    // Load row (Speediance only OR equipment choice, with global memory)
     let loadRow = null;
-    if (ex.equipment === 'speediance') {
+    if (ex.equipment === 'speediance' || ex.equipmentChoice) {
       loadRow = document.createElement('div');
       loadRow.className = 'load-row';
+
+      // Equipment selector for exercises with choice
+      if (ex.equipmentChoice) {
+        const equipToggle = document.createElement('label');
+        equipToggle.className = 'equipment-toggle';
+        equipToggle.style.marginRight = 'var(--space-md)';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'equipment-checkbox';
+
+        // Get equipment preference from state (default to false = free weights)
+        const equipmentPrefs = state._global.equipmentPrefs || {};
+        const useSpeediance = equipmentPrefs[ex.id] || false;
+        checkbox.checked = useSpeediance;
+
+        const label = document.createElement('span');
+        label.textContent = useSpeediance ? 'Speediance' : 'Free Weights';
+        label.style.marginLeft = 'var(--space-xs)';
+
+        checkbox.onchange = () => {
+          const newPrefs = { ...equipmentPrefs, [ex.id]: checkbox.checked };
+          state._global.equipmentPrefs = newPrefs;
+          saveState();
+          label.textContent = checkbox.checked ? 'Speediance' : 'Free Weights';
+          // Re-render to update load value
+          renderWorkout();
+        };
+
+        equipToggle.appendChild(checkbox);
+        equipToggle.appendChild(label);
+        loadRow.appendChild(equipToggle);
+      }
 
       const loadLabel = document.createElement('span');
       loadLabel.textContent = 'Load:';
@@ -1087,17 +1120,25 @@ function renderWorkout() {
       loadInput.min = '0';
       loadInput.step = '1';
 
-      const todayVal = workoutLoadsToday[ex.id];
-      const globalVal = globalLoads[ex.id];
+      // Determine equipment key for load storage
+      let equipmentKey = ex.id;
+      if (ex.equipmentChoice) {
+        const equipmentPrefs = state._global.equipmentPrefs || {};
+        const useSpeediance = equipmentPrefs[ex.id] || false;
+        equipmentKey = useSpeediance ? `${ex.id}_speediance` : `${ex.id}_free`;
+      }
+
+      const todayVal = workoutLoadsToday[equipmentKey];
+      const globalVal = globalLoads[equipmentKey];
       loadInput.value = (todayVal ?? globalVal) ?? '';
 
       loadInput.onchange = () => {
         const val = loadInput.value === '' ? null : Number(loadInput.value);
 
-        const newLoadsToday = { ...workoutLoadsToday, [ex.id]: val };
+        const newLoadsToday = { ...workoutLoadsToday, [equipmentKey]: val };
         setTodayState({ workoutLoads: newLoadsToday });
 
-        const newGlobalLoads = { ...globalLoads, [ex.id]: val };
+        const newGlobalLoads = { ...globalLoads, [equipmentKey]: val };
         setGlobalLoads(newGlobalLoads);
       };
 

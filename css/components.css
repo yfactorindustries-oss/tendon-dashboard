@@ -471,6 +471,20 @@ input[type="checkbox"]:checked::after {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.equipment-toggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.equipment-checkbox {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
 }
 
 .load-row input[type="number"] {

@@ -1016,17 +1016,38 @@ function renderWorkout() {
         display.className = 'timer-display';
         if (isoState[i]) display.textContent = 'Done';
 
+        let timerId = null;
+        let isPaused = false;
+        let phase = 'hold';
+        let remaining = isoDuration;
+
         btn.onclick = () => {
-          if (isoState[i] || activeTimer) return;
+          if (isoState[i]) return;
 
-          activeTimer = true;
-          btn.disabled = true;
+          // If timer is running, pause it
+          if (timerId && !isPaused) {
+            isPaused = true;
+            clearInterval(timerId);
+            timerId = null;
+            btn.textContent = 'Resume';
+            return;
+          }
 
-          let phase = 'hold';
-          let remaining = isoDuration;
+          // If paused, resume it
+          if (isPaused) {
+            isPaused = false;
+            btn.textContent = `Set ${i} • Pause`;
+          } else {
+            // Starting fresh
+            activeTimer = true;
+            phase = 'hold';
+            remaining = isoDuration;
+            btn.textContent = `Set ${i} • Pause`;
+          }
+
           display.textContent = `Hold ${formatSeconds(remaining)}`;
 
-          const id = setInterval(() => {
+          timerId = setInterval(() => {
             remaining -= 1;
 
             if (remaining <= 0) {
@@ -1036,9 +1057,11 @@ function renderWorkout() {
                 display.textContent = `Rest ${formatSeconds(remaining)}`;
                 return;
               } else {
-                clearInterval(id);
+                clearInterval(timerId);
+                timerId = null;
                 btn.disabled = false;
                 btn.classList.add('done');
+                btn.textContent = `Set ${i} • ${isoDuration}s`;
                 display.textContent = 'Done';
 
                 const newIsoState = { ...isoState, [i]: true };
@@ -1046,6 +1069,7 @@ function renderWorkout() {
                 setTodayState({ workoutIsoSets: newWorkoutIsoSets });
 
                 activeTimer = false;
+                isPaused = false;
                 renderWorkout();
               }
             } else {

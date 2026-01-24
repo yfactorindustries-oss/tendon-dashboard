@@ -1,0 +1,158 @@
+/**
+ * Layout Styles - Tendon Dashboard v2.0
+ * Responsive grid system and layouts
+ */
+
+/* ============================================
+   APP CONTAINER
+   ============================================ */
+
+.app-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md) var(--space-2xl);
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+header {
+  margin-bottom: var(--space-xl);
+  animation: slide-down 0.5s ease-out;
+}
+
+header h1 {
+  margin-bottom: var(--space-xs);
+}
+
+/* ============================================
+   DASHBOARD GRID (Desktop)
+   ============================================ */
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  /* Full-width cards */
+  .card-full {
+    grid-column: 1 / -1;
+  }
+
+  /* Analytics card gets special treatment */
+  .card-analytics {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ============================================
+   TABLET LAYOUT
+   ============================================ */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .app-container {
+    max-width: 768px;
+    padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+  }
+
+  .card {
+    padding: var(--space-xl);
+  }
+
+  .pain-grid {
+    gap: var(--space-xl);
+  }
+}
+
+/* ============================================
+   MOBILE LAYOUT
+   ============================================ */
+
+@media (max-width: 767px) {
+  .app-container {
+    max-width: 640px;
+    padding: var(--space-lg) var(--space-md) var(--space-2xl);
+  }
+
+  header h1 {
+    font-size: var(--text-xl);
+  }
+
+  .card {
+    padding: var(--space-md) var(--space-md);
+  }
+
+  .card h2 {
+    font-size: var(--text-lg);
+  }
+
+  .pain-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .footer-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .footer-row button {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   SMALL MOBILE (320px - 375px)
+   ============================================ */
+
+@media (max-width: 375px) {
+  .app-container {
+    padding: var(--space-md) var(--space-sm) var(--space-xl);
+  }
+
+  .sets-row {
+    gap: var(--space-xs);
+  }
+
+  .set-pill {
+    font-size: var(--text-xs);
+    padding: 0.15rem var(--space-sm);
+  }
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+/* Hide on mobile */
+.hide-mobile {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none;
+  }
+}
+
+/* Hide on desktop */
+.hide-desktop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .hide-desktop {
+    display: block;
+  }
+}
+
+/* Stack on mobile */
+@media (max-width: 767px) {
+  .stack-mobile {
+    flex-direction: column;
+  }
+}

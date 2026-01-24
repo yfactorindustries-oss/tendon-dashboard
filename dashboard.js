@@ -592,80 +592,134 @@ function renderRehab() {
       const timerRow = document.createElement('div');
       timerRow.className = 'timer-row';
 
-      let activeTimer = false;
-
       for (let i = 1; i <= sets; i++) {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'timer-btn' + (setState[i] ? ' done' : '');
-        btn.textContent = `Set ${i} • ${duration}s`;
+        btn.textContent = `Set ${i} • Reset`;
 
         const display = document.createElement('span');
         display.className = 'timer-display';
         if (setState[i]) display.textContent = 'Done';
 
+        let timerId = null;
+        let isPaused = false;
+        let phase = 'hold';
+        let remaining = duration;
+        let isRunning = false;
+
+        // Create pause button
+        const pauseBtn = document.createElement('button');
+        pauseBtn.type = 'button';
+        pauseBtn.className = 'timer-control-btn';
+        pauseBtn.textContent = 'Pause';
+        pauseBtn.style.display = 'none';
+
+        // Create reset button
+        const resetBtn = document.createElement('button');
+        resetBtn.type = 'button';
+        resetBtn.className = 'timer-control-btn';
+        resetBtn.textContent = 'Reset';
+        resetBtn.style.display = 'none';
+
         btn.onclick = () => {
-          if (setState[i] || activeTimer) return;
+          if (setState[i]) return;
 
-          activeTimer = true;
-          btn.disabled = true;
+          if (isRunning || isPaused) {
+            if (isPaused) {
+              isPaused = false;
+              pauseBtn.textContent = 'Pause';
+            }
+          } else {
+            isRunning = true;
+            phase = 'hold';
+            remaining = duration;
+            pauseBtn.style.display = 'inline-block';
+            resetBtn.style.display = 'inline-block';
+          }
 
-          let phase = 'hold';
-          let remaining = duration;
           display.textContent = `Hold ${formatSeconds(remaining)}`;
 
-          const id = setInterval(() => {
-            remaining -= 1;
+          timerId = setInterval(() => {
+            if (!isPaused) {
+              remaining -= 1;
 
-            if (remaining <= 0) {
-              if (phase === 'hold' && rest > 0) {
-                phase = 'rest';
-                remaining = rest;
-                display.textContent = `Rest ${formatSeconds(remaining)}`;
-                return;
-              } else {
-                clearInterval(id);
-                btn.disabled = false;
-                btn.classList.add('done');
-                display.textContent = 'Done';
+              if (remaining <= 0) {
+                if (phase === 'hold' && rest > 0) {
+                  phase = 'rest';
+                  remaining = rest;
+                  display.textContent = `Rest ${formatSeconds(remaining)}`;
+                  return;
+                } else {
+                  clearInterval(timerId);
+                  timerId = null;
+                  isRunning = false;
+                  btn.disabled = false;
+                  btn.classList.add('done');
+                  display.textContent = 'Done';
+                  pauseBtn.style.display = 'none';
+                  resetBtn.style.display = 'none';
 
-                const newItemState = { ...setState, [i]: true };
-                const newRehabSetsDone = { ...rehabSetsDone, [item.id]: newItemState };
+                  const newItemState = { ...setState, [i]: true };
+                  const newRehabSetsDone = { ...rehabSetsDone, [item.id]: newItemState };
 
-                let allDone = true;
-                for (let s = 1; s <= sets; s++) {
-                  if (!newItemState[s]) { allDone = false; break; }
+                  let allDone = true;
+                  for (let s = 1; s <= sets; s++) {
+                    if (!newItemState[s]) { allDone = false; break; }
+                  }
+
+                  const newRehabDone = {
+                    ...rehabDone,
+                    [item.id]: allDone ? true : rehabDone[item.id]
+                  };
+
+                  setTodayState({
+                    rehabDone: newRehabDone,
+                    rehabSetsDone: newRehabSetsDone
+                  });
+
+                  isPaused = false;
+                  renderRehab();
                 }
-
-                const newRehabDone = {
-                  ...rehabDone,
-                  [item.id]: allDone ? true : rehabDone[item.id]
-                };
-
-                setTodayState({
-                  rehabDone: newRehabDone,
-                  rehabSetsDone: newRehabSetsDone
-                });
-
-                activeTimer = false;
-                renderRehab();
+              } else {
+                display.textContent =
+                  (phase === 'hold'
+                    ? `Hold ${formatSeconds(remaining)}`
+                    : `Rest ${formatSeconds(remaining)}`);
               }
-            } else {
-              display.textContent =
-                (phase === 'hold'
-                  ? `Hold ${formatSeconds(remaining)}`
-                  : `Rest ${formatSeconds(remaining)}`);
             }
           }, 1000);
         };
 
+        pauseBtn.onclick = () => {
+          isPaused = !isPaused;
+          pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+        };
+
+        resetBtn.onclick = () => {
+          if (timerId) {
+            clearInterval(timerId);
+            timerId = null;
+          }
+          isRunning = false;
+          isPaused = false;
+          phase = 'hold';
+          remaining = duration;
+          display.textContent = '';
+          pauseBtn.style.display = 'none';
+          resetBtn.style.display = 'none';
+          pauseBtn.textContent = 'Pause';
+        };
+
         timerRow.appendChild(btn);
         timerRow.appendChild(display);
+        timerRow.appendChild(pauseBtn);
+        timerRow.appendChild(resetBtn);
       }
 
       label.appendChild(timerRow);
     }
-    // Duration only (no sets) - single countdown timer with pause/stop
+    // Duration only (no sets) - single countdown timer with pause/reset
     else if (duration > 0 && sets === 0) {
       const timerRow = document.createElement('div');
       timerRow.className = 'timer-row';
@@ -673,52 +727,66 @@ function renderRehab() {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'timer-btn' + (rehabDone[item.id] ? ' done' : '');
-      btn.textContent = `Start ${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`;
+      btn.textContent = 'Reset';
 
       const display = document.createElement('span');
       display.className = 'timer-display';
       if (rehabDone[item.id]) display.textContent = 'Done';
 
+      let intervalId = null;
+      let remaining = duration;
+      let isPaused = false;
+      let isRunning = false;
+
       const pauseBtn = document.createElement('button');
       pauseBtn.type = 'button';
-      pauseBtn.className = 'timer-btn';
+      pauseBtn.className = 'timer-control-btn';
       pauseBtn.textContent = 'Pause';
       pauseBtn.style.display = 'none';
 
-      const stopBtn = document.createElement('button');
-      stopBtn.type = 'button';
-      stopBtn.className = 'timer-btn';
-      stopBtn.textContent = 'Stop';
-      stopBtn.style.display = 'none';
-
-      let intervalId = null;
-      let remaining = duration;
-      let paused = false;
+      const resetBtn = document.createElement('button');
+      resetBtn.type = 'button';
+      resetBtn.className = 'timer-control-btn';
+      resetBtn.textContent = 'Reset';
+      resetBtn.style.display = 'none';
 
       btn.onclick = () => {
         if (rehabDone[item.id]) return;
 
-        btn.style.display = 'none';
-        pauseBtn.style.display = 'inline-block';
-        stopBtn.style.display = 'inline-block';
+        if (isRunning || isPaused) {
+          if (isPaused) {
+            isPaused = false;
+            pauseBtn.textContent = 'Pause';
+          }
+        } else {
+          isRunning = true;
+          remaining = duration;
+          pauseBtn.style.display = 'inline-block';
+          resetBtn.style.display = 'inline-block';
+        }
+
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        display.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
 
         intervalId = setInterval(() => {
-          if (!paused) {
+          if (!isPaused) {
             remaining -= 1;
 
             if (remaining <= 0) {
               clearInterval(intervalId);
+              intervalId = null;
+              isRunning = false;
               btn.classList.add('done');
-              btn.style.display = 'inline-block';
-              btn.textContent = `Start ${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`;
               pauseBtn.style.display = 'none';
-              stopBtn.style.display = 'none';
+              resetBtn.style.display = 'none';
               display.textContent = 'Done';
 
               setTodayState({
                 rehabDone: { ...rehabDone, [item.id]: true }
               });
               updateTodayCompliance();
+              isPaused = false;
               renderRehab();
             } else {
               const mins = Math.floor(remaining / 60);
@@ -730,25 +798,28 @@ function renderRehab() {
       };
 
       pauseBtn.onclick = () => {
-        paused = !paused;
-        pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
       };
 
-      stopBtn.onclick = () => {
-        clearInterval(intervalId);
+      resetBtn.onclick = () => {
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+        isRunning = false;
+        isPaused = false;
         remaining = duration;
-        paused = false;
-        btn.style.display = 'inline-block';
-        pauseBtn.style.display = 'none';
-        stopBtn.style.display = 'none';
-        pauseBtn.textContent = 'Pause';
         display.textContent = '';
+        pauseBtn.style.display = 'none';
+        resetBtn.style.display = 'none';
+        pauseBtn.textContent = 'Pause';
       };
 
       timerRow.appendChild(btn);
-      timerRow.appendChild(pauseBtn);
-      timerRow.appendChild(stopBtn);
       timerRow.appendChild(display);
+      timerRow.appendChild(pauseBtn);
+      timerRow.appendChild(resetBtn);
       label.appendChild(timerRow);
     }
     // Sets with reps (no duration) - clickable set buttons with auto rest timer

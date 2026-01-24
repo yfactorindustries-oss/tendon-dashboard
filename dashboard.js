@@ -1073,45 +1073,42 @@ function renderWorkout() {
       }
     }
 
-    // Load row (Speediance only OR equipment choice, with global memory)
+    // Load row (equipment choice with global memory)
     let loadRow = null;
-    if (ex.equipment === 'speediance' || ex.equipmentChoice) {
+    if (ex.equipmentChoice) {
       loadRow = document.createElement('div');
       loadRow.className = 'load-row';
 
-      // Equipment selector for exercises with choice
-      if (ex.equipmentChoice) {
-        const equipToggle = document.createElement('label');
-        equipToggle.className = 'equipment-toggle';
-        equipToggle.style.marginRight = 'var(--space-md)';
+      // Equipment selector checkbox
+      const equipToggle = document.createElement('label');
+      equipToggle.className = 'equipment-toggle';
 
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'equipment-checkbox';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'equipment-checkbox';
 
-        // Get equipment preference from state (default to false = free weights)
-        const equipmentPrefs = state._global.equipmentPrefs || {};
-        const useSpeediance = equipmentPrefs[ex.id] || false;
-        checkbox.checked = useSpeediance;
+      // Get equipment preference from state (default to false = free weights)
+      const equipmentPrefs = state._global.equipmentPrefs || {};
+      const useSpeediance = equipmentPrefs[ex.id] || false;
+      checkbox.checked = useSpeediance;
 
-        const label = document.createElement('span');
-        label.textContent = useSpeediance ? 'Speediance' : 'Free Weights';
-        label.style.marginLeft = 'var(--space-xs)';
+      const label = document.createElement('span');
+      label.textContent = useSpeediance ? 'Speediance' : 'Free Weights';
 
-        checkbox.onchange = () => {
-          const newPrefs = { ...equipmentPrefs, [ex.id]: checkbox.checked };
-          state._global.equipmentPrefs = newPrefs;
-          saveState();
-          label.textContent = checkbox.checked ? 'Speediance' : 'Free Weights';
-          // Re-render to update load value
-          renderWorkout();
-        };
+      checkbox.onchange = () => {
+        const newPrefs = { ...equipmentPrefs, [ex.id]: checkbox.checked };
+        state._global.equipmentPrefs = newPrefs;
+        saveState();
+        label.textContent = checkbox.checked ? 'Speediance' : 'Free Weights';
+        // Re-render to update load value
+        renderWorkout();
+      };
 
-        equipToggle.appendChild(checkbox);
-        equipToggle.appendChild(label);
-        loadRow.appendChild(equipToggle);
-      }
+      equipToggle.appendChild(checkbox);
+      equipToggle.appendChild(label);
+      loadRow.appendChild(equipToggle);
 
+      // Load input
       const loadLabel = document.createElement('span');
       loadLabel.textContent = 'Load:';
 
@@ -1121,12 +1118,7 @@ function renderWorkout() {
       loadInput.step = '1';
 
       // Determine equipment key for load storage
-      let equipmentKey = ex.id;
-      if (ex.equipmentChoice) {
-        const equipmentPrefs = state._global.equipmentPrefs || {};
-        const useSpeediance = equipmentPrefs[ex.id] || false;
-        equipmentKey = useSpeediance ? `${ex.id}_speediance` : `${ex.id}_free`;
-      }
+      const equipmentKey = useSpeediance ? `${ex.id}_speediance` : `${ex.id}_free`;
 
       const todayVal = workoutLoadsToday[equipmentKey];
       const globalVal = globalLoads[equipmentKey];

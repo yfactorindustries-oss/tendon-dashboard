@@ -849,6 +849,13 @@ function getTodayWorkoutConfig() {
   const currentBlock = getCurrentBlock();
   if (!currentBlock) return null;
 
+  // Check for manual override first
+  const manualWorkoutId = localStorage.getItem('manualWorkoutOverride');
+  if (manualWorkoutId) {
+    const manualWorkout = (currentBlock.workouts || []).find(w => w.id === manualWorkoutId);
+    if (manualWorkout) return manualWorkout;
+  }
+
   const weekday = new Date().getDay();
 
   // Support old rotation format (legacy configs)
@@ -1255,11 +1262,62 @@ function setupConfigUpload() {
   };
 }
 
+function setupWorkoutSelector() {
+  const selector = document.getElementById('workoutSelector');
+  const badge = document.getElementById('selectorBadge');
+
+  if (!selector) return;
+
+  // Populate dropdown with all workouts from current block
+  const currentBlock = getCurrentBlock();
+  if (!currentBlock || !currentBlock.workouts) return;
+
+  // Clear existing options except the first "Auto" option
+  selector.innerHTML = '<option value="">Auto (Scheduled)</option>';
+
+  // Add all workouts from current block
+  currentBlock.workouts.forEach(workout => {
+    const option = document.createElement('option');
+    option.value = workout.id;
+    option.textContent = workout.name;
+    selector.appendChild(option);
+  });
+
+  // Set current selection based on override
+  const manualOverride = localStorage.getItem('manualWorkoutOverride');
+  if (manualOverride) {
+    selector.value = manualOverride;
+    badge.style.display = 'inline-flex';
+  } else {
+    selector.value = '';
+    badge.style.display = 'none';
+  }
+
+  // Handle selection change
+  selector.onchange = () => {
+    const selectedValue = selector.value;
+
+    if (selectedValue) {
+      // Manual selection
+      localStorage.setItem('manualWorkoutOverride', selectedValue);
+      badge.style.display = 'inline-flex';
+    } else {
+      // Back to auto
+      localStorage.removeItem('manualWorkoutOverride');
+      badge.style.display = 'none';
+    }
+
+    // Re-render workout section
+    renderWorkout();
+  };
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   todayStr = getTodayStr();
   state = loadState();
   await initConfig();
   setupConfigUpload();
+  setupWorkoutSelector();
   document.getElementById('resetDayBtn').onclick = () => {
     if (confirm("Reset today's data?")) resetToday();
   };

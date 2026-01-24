@@ -8,58 +8,58 @@
      COLOR PALETTE
      ============================================ */
 
-  /* Base Colors */
-  --color-bg-primary: #0a0f1e;           /* Deeper, richer background */
-  --color-bg-secondary: #141b2d;         /* Card backgrounds */
-  --color-bg-tertiary: #1e293b;          /* Elevated elements */
+  /* Base Colors - Lighter, Warmer Dark Mode */
+  --color-bg-primary: #1a2332;           /* Softer navy-gray background */
+  --color-bg-secondary: #212d3f;         /* Warmer card backgrounds */
+  --color-bg-tertiary: #2a3441;          /* Elevated elements with warmth */
 
   /* Surface Colors */
-  --color-surface-raised: #1f2937;       /* Interactive elements */
-  --color-surface-overlay: rgba(255, 255, 255, 0.05); /* Subtle overlays */
+  --color-surface-raised: #313d4f;       /* Interactive elements */
+  --color-surface-overlay: rgba(255, 255, 255, 0.08); /* More visible overlays */
 
   /* Text Hierarchy */
-  --color-text-primary: #f8fafc;         /* Headers, important text */
-  --color-text-secondary: #cbd5e1;       /* Body text */
-  --color-text-tertiary: #94a3b8;        /* Metadata, labels */
-  --color-text-muted: #64748b;           /* Disabled, subtle */
+  --color-text-primary: #ffffff;         /* Pure white headers */
+  --color-text-secondary: #e2e8f0;       /* Brighter body text */
+  --color-text-tertiary: #a8b5c7;        /* Warmer metadata */
+  --color-text-muted: #7a8699;           /* Disabled, subtle */
 
-  /* Accent Colors */
-  --color-accent-primary: #3b82f6;       /* Primary actions, links */
-  --color-accent-primary-hover: #2563eb;
-  --color-accent-secondary: #8b5cf6;     /* Secondary emphasis */
+  /* Accent Colors - Vibrant Blue-Teal Gradient */
+  --color-accent-primary: #3b9eff;       /* Brighter blue */
+  --color-accent-primary-hover: #2d8aeb;
+  --color-accent-secondary: #06b6d4;     /* Teal for contrast */
 
-  /* Status Colors - Enhanced */
-  --color-success: #10b981;              /* Completed items */
-  --color-success-bg: rgba(16, 185, 129, 0.1);
-  --color-success-border: rgba(16, 185, 129, 0.3);
+  /* Status Colors - Enhanced & Vibrant */
+  --color-success: #14f195;              /* Brighter green */
+  --color-success-bg: rgba(20, 241, 149, 0.12);
+  --color-success-border: rgba(20, 241, 149, 0.35);
 
-  --color-warning: #f59e0b;              /* In progress, moderate pain */
-  --color-warning-bg: rgba(245, 158, 11, 0.1);
-  --color-warning-border: rgba(245, 158, 11, 0.3);
+  --color-warning: #fbbf24;              /* Warmer amber */
+  --color-warning-bg: rgba(251, 191, 36, 0.12);
+  --color-warning-border: rgba(251, 191, 36, 0.35);
 
-  --color-danger: #ef4444;               /* High pain, alerts */
-  --color-danger-bg: rgba(239, 68, 68, 0.1);
-  --color-danger-border: rgba(239, 68, 68, 0.3);
+  --color-danger: #f87171;               /* Softer red */
+  --color-danger-bg: rgba(248, 113, 113, 0.12);
+  --color-danger-border: rgba(248, 113, 113, 0.35);
 
-  --color-info: #06b6d4;                 /* Informational */
-  --color-info-bg: rgba(6, 182, 212, 0.1);
-  --color-info-border: rgba(6, 182, 212, 0.3);
+  --color-info: #22d3ee;                 /* Brighter cyan */
+  --color-info-bg: rgba(34, 211, 238, 0.12);
+  --color-info-border: rgba(34, 211, 238, 0.35);
 
-  /* Borders */
-  --border-subtle: #1e293b;
-  --border-medium: #334155;
-  --border-strong: #475569;
+  /* Borders - More Contrast */
+  --border-subtle: #2d3748;
+  --border-medium: #3f4b5e;
+  --border-strong: #526076;
 
   /* ============================================
      SHADOWS
      ============================================ */
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.2);
-  --shadow-glow-success: 0 0 15px rgba(16, 185, 129, 0.2);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px rgba(59, 158, 255, 0.25);
+  --shadow-glow-success: 0 0 15px rgba(20, 241, 149, 0.25);
 
   /* ============================================
      SPACING SCALE

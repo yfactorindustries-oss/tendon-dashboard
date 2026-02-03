@@ -732,3 +732,87 @@ input[type="checkbox"]:checked::after {
     max-width: 100%;
   }
 }
+
+/* ============================================
+   WORKOUT SECTION HEADERS
+   ============================================ */
+
+.section-header {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-md) 0 var(--space-xs);
+  border-bottom: 1px solid var(--border-subtle);
+  margin-top: var(--space-lg);
+}
+
+.section-header:first-child {
+  margin-top: 0;
+}
+
+/* ============================================
+   REHAB CATEGORY LABELS
+   ============================================ */
+
+.rehab-category-label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: var(--space-sm) 0 var(--space-xs);
+  margin-top: var(--space-md);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.rehab-category-label:first-child {
+  margin-top: 0;
+}
+
+/* ============================================
+   EXERCISE NOTES
+   ============================================ */
+
+.exercise-notes {
+  font-style: italic;
+  color: var(--color-text-tertiary);
+  margin-top: var(--space-xs);
+}
+
+/* ============================================
+   COMPLETE WORKOUT BUTTON
+   ============================================ */
+
+.complete-workout-btn {
+  width: 100%;
+  margin-top: var(--space-xl);
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+  border: 1px solid var(--color-accent-primary);
+  color: white;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.complete-workout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.complete-workout-btn.done {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  opacity: 0.8;
+  cursor: default;
+  transform: none;
+}
+
+.complete-workout-btn.done:hover {
+  transform: none;
+  box-shadow: none;
+}

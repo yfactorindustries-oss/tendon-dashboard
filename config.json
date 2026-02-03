@@ -1,287 +1,331 @@
 {
   "programName": "Firefighter Long-Career Training System",
-  "notes": "1-Year Program (Shift-Work Compatible). Primary goals: Career longevity (8+ years), aerobic robustness under load, joint/tendon durability.",
+  "configVersion": 2,
+  "notes": "Phase 1 (8 weeks). Sequential rotation: A -> B -> C -> D -> R1 -> R2, resume where you left off.",
 
   "blocks": [
     {
-      "id": "block_a",
-      "name": "Block A - Base / Durability",
-      "startDate": "2026-01-20",
-      "endDate": "2026-04-13",
-      "weekRange": "Weeks 1-12",
-      "notes": "Aerobic duration increases first, accessory volume second, load last. Main lifts capped at RPE 7-8.",
+      "id": "phase1",
+      "name": "Phase 1 - Foundation",
+      "startDate": "2026-02-02",
+      "endDate": "2026-03-29",
+      "weekRange": "Weeks 1-8",
+      "rotationType": "sequential",
+      "rotationOrder": ["phase1_a", "phase1_b", "phase1_c", "phase1_d", "phase1_r1", "phase1_r2"],
+      "notes": "4-5 structured days + 2-3 recovery days. Rotation: A -> B -> C -> D -> R1 -> R2, then repeat.",
 
       "dailyRehab": [
         {
-          "id": "forearm_biceps",
-          "label": "Forearms + Distal Biceps",
-          "details": "Soft tissue - 2 min continuous",
-          "durationSeconds": 120
-        },
-        {
-          "id": "lats_pec",
-          "label": "Lats + Pec Minor",
-          "details": "Soft tissue - 2 min continuous",
-          "durationSeconds": 120
-        },
-        {
-          "id": "elbow_cars",
+          "id": "morning_elbow_cars",
           "label": "Elbow CARs",
-          "details": "2 reps per side (slow, controlled)",
+          "details": "2 reps per side, slow and controlled",
           "sets": 2,
-          "reps": "2",
-          "restSeconds": 30
+          "reps": "2/side",
+          "category": "morning"
         },
         {
-          "id": "shoulder_cars",
+          "id": "morning_shoulder_cars",
           "label": "Shoulder CARs",
-          "details": "2 reps per side (slow, controlled)",
+          "details": "2 reps per side, slow and controlled",
           "sets": 2,
-          "reps": "2",
-          "restSeconds": 30
+          "reps": "2/side",
+          "category": "morning"
         },
         {
-          "id": "hip_cars",
+          "id": "morning_hip_cars",
           "label": "Hip CARs",
-          "details": "2 reps per side (slow, controlled)",
+          "details": "2 reps per side, slow and controlled",
           "sets": 2,
-          "reps": "2",
-          "restSeconds": 30
+          "reps": "2/side",
+          "category": "morning"
         },
         {
-          "id": "ankle_dorsiflexion",
-          "label": "Banded Ankle Dorsiflexion",
-          "details": "2×15 per side",
-          "sets": 2,
-          "reps": "15",
-          "restSeconds": 45
-        },
-        {
-          "id": "tspine_openbooks",
-          "label": "T-Spine Open Books",
-          "details": "1×5 per side",
-          "sets": 1,
-          "reps": "5",
-          "restSeconds": 0
-        },
-        {
-          "id": "breathing",
-          "label": "Crocodile or 90/90 Breathing",
+          "id": "evening_breathing",
+          "label": "Crocodile Breathing",
           "details": "2 min - Nasal inhale, 4-6 sec exhale",
-          "durationSeconds": 120
+          "durationSeconds": 120,
+          "category": "evening"
+        },
+        {
+          "id": "evening_hip_stretch",
+          "label": "90/90 Hip Stretch",
+          "details": "1 min per side",
+          "durationSeconds": 60,
+          "category": "evening"
+        },
+        {
+          "id": "shift_movement",
+          "label": "Stand/Move Every 45min",
+          "details": "Stand and move every 45 minutes",
+          "category": "shift"
+        },
+        {
+          "id": "shift_squats",
+          "label": "10 Air Squats Every 2hr",
+          "details": "10 bodyweight squats every 2 hours",
+          "category": "shift"
+        },
+        {
+          "id": "shift_forearm_stretch",
+          "label": "Forearm Stretch",
+          "details": "30 sec per side when you think of it",
+          "durationSeconds": 30,
+          "category": "shift"
         }
       ],
 
       "workouts": [
         {
-          "id": "unit_a",
-          "name": "Unit A - Lower Strength + Short Aerobic",
-          "days": [1],
-          "notes": "Main lifts RPE 6-7",
-          "exercises": [
+          "id": "phase1_a",
+          "name": "PHASE1-A: Lower Strength + Aerobic Base",
+          "order": 0,
+          "notes": "Strength Training + Zone 2 Cardio",
+          "sections": [
             {
-              "id": "squat",
-              "label": "Squat",
-              "sets": 5,
-              "reps": "5",
-              "notes": "RPE 6-7, Controlled eccentric, Rest 2-3 min",
-              "equipmentChoice": true
+              "title": "Warm Up",
+              "exercises": [
+                { "id": "warmup_a", "label": "General Warm Up", "durationSeconds": 300, "details": "5 minutes dynamic warm-up" }
+              ]
             },
             {
-              "id": "reverse_lunge",
-              "label": "Reverse Lunge",
-              "sets": 3,
-              "reps": "8/side",
-              "notes": "Rest 90 sec",
-              "equipmentChoice": true
+              "title": "Strength",
+              "exercises": [
+                { "id": "goblet_squat", "label": "Goblet Squat (Belt Squat)", "sets": 3, "reps": "8", "notes": "Rest 2:00 between sets", "equipmentChoice": true, "restSeconds": 120 },
+                { "id": "trap_bar_dl_a", "label": "Trap Bar Deadlift", "sets": 4, "reps": "5", "notes": "Rest 2:30 between sets", "equipmentChoice": true, "restSeconds": 150 },
+                { "id": "step_up", "label": "Step Up", "sets": 3, "reps": "16 (8/side)", "notes": "Rest 1:30 between sets", "equipmentChoice": true, "restSeconds": 90 },
+                { "id": "leg_curl_a", "label": "Leg Curl", "sets": 3, "reps": "12", "notes": "Rest 1:00 between sets", "equipmentChoice": true, "restSeconds": 60 }
+              ]
             },
             {
-              "id": "sl_rdl",
-              "label": "Single-Leg RDL",
-              "sets": 3,
-              "reps": "10",
-              "notes": "Rest 90 sec",
-              "equipmentChoice": true
+              "title": "Cooldown Stretches",
+              "exercises": [
+                { "id": "cooldown_a", "label": "Cooldown Stretches", "details": "90/90 hip stretch 60s/side, Kneeling hip flexor stretch 45s/side, Child's pose 60s, Cat-cow 10 reps slow, Crocodile breathing 2 min" }
+              ]
             },
             {
-              "id": "rfess",
-              "label": "Rear-Foot Elevated Split Squat",
-              "sets": 3,
-              "reps": "10/side",
-              "notes": "3-sec eccentric, Rest 90 sec",
-              "equipmentChoice": true
-            },
-            {
-              "id": "ham_curl",
-              "label": "Hamstring Curl",
-              "sets": 3,
-              "reps": "12-15",
-              "notes": "Rest 60-90 sec",
-              "equipmentChoice": true
-            },
-            {
-              "id": "aerobic",
-              "label": "Zone 2 Aerobic",
-              "details": "20-30 min - Walk, bike, or incline treadmill. Nasal breathing only."
+              "title": "Aerobic Base",
+              "exercises": [
+                { "id": "warmup_cardio_a", "label": "Cardio Warm Up", "durationSeconds": 180, "details": "3 min easy pace" },
+                { "id": "zone2_walk_bike", "label": "Walk or Bike", "details": "25-35 min, Zone 2, nasal breathing only" },
+                { "id": "cooldown_cardio_a", "label": "Cardio Cooldown", "details": "Calf stretch 45s/side, Standing quad stretch 45s/side, Standing hamstring stretch 45s/side, Hip flexor stretch 60s/side, Cat-cow 10 reps, Crocodile breathing 2 min" }
+              ]
             }
           ]
         },
         {
-          "id": "unit_b",
-          "name": "Unit B - Upper Strength + Aerobic Recovery",
-          "days": [2],
-          "notes": "Elbow health prioritized",
-          "exercises": [
+          "id": "phase1_b",
+          "name": "PHASE1-B: Upper Strength + Grip + Aerobic Recovery",
+          "order": 1,
+          "notes": "Strength Training + Easy Cardio",
+          "sections": [
             {
-              "id": "neutral_press",
-              "label": "Neutral-Grip Press",
-              "sets": 4,
-              "reps": "6",
-              "notes": "RPE 6-7, Rest 2 min",
-              "equipmentChoice": true
+              "title": "Warm Up",
+              "exercises": [
+                { "id": "warmup_b", "label": "General Warm Up", "durationSeconds": 300, "details": "5 minutes dynamic warm-up" }
+              ]
             },
             {
-              "id": "chest_row",
-              "label": "Chest-Supported Row",
-              "sets": 4,
-              "reps": "10",
-              "notes": "Rest 90 sec",
-              "equipmentChoice": true
+              "title": "Strength",
+              "exercises": [
+                { "id": "db_shoulder_press", "label": "Seated DB Shoulder Press", "sets": 4, "reps": "6", "notes": "Rest 2:00 between sets", "equipmentChoice": true, "restSeconds": 120 },
+                { "id": "seated_cable_row", "label": "Seated Cable Row", "sets": 4, "reps": "10", "notes": "Rest 1:30 between sets", "equipmentChoice": true, "restSeconds": 90 },
+                { "id": "lat_pulldown", "label": "Lat Pulldown", "sets": 3, "reps": "12", "notes": "Rest 1:30 between sets", "equipmentChoice": true, "restSeconds": 90 },
+                { "id": "db_hammer_curl", "label": "Dumbbell Hammer Curl", "sets": 3, "reps": "12", "notes": "Rest 1:00 between sets", "equipmentChoice": true, "restSeconds": 60 },
+                { "id": "bar_hold", "label": "Bar Hold (or Farmer's Walk)", "sets": 3, "durationSeconds": 20, "notes": "20 sec hold, Rest 0:45", "restSeconds": 45 },
+                { "id": "triceps_pushdown", "label": "Triceps Pushdown", "sets": 3, "reps": "15", "notes": "Rest 1:00 between sets", "equipmentChoice": true, "restSeconds": 60 },
+                { "id": "face_pull_b", "label": "Face Pull", "sets": 2, "reps": "15", "notes": "Rest 0:45 between sets", "restSeconds": 45 },
+                { "id": "cable_ext_rotation_b", "label": "Cable External Rotation", "sets": 2, "reps": "12/side", "notes": "Rest 0:45 between sets", "restSeconds": 45 }
+              ]
             },
             {
-              "id": "incline_curl",
-              "label": "Incline DB Curl",
-              "sets": 3,
-              "reps": "12-15",
-              "notes": "Slow eccentric, Rest 60-90 sec",
-              "equipmentChoice": true
+              "title": "Cooldown Stretches",
+              "exercises": [
+                { "id": "cooldown_b", "label": "Cooldown Stretches", "details": "Doorway pec stretch 45s/side, Cross-body shoulder stretch 30s/side, Lat stretch 45s, Forearm extensor stretch 30s/side, Forearm flexor stretch 30s/side, Cat-cow 10 reps, Crocodile breathing 2 min" }
+              ]
             },
             {
-              "id": "hammer_curl",
-              "label": "Hammer Curl",
-              "sets": 3,
-              "reps": "10",
-              "notes": "Rest 60-90 sec",
-              "equipmentChoice": true
-            },
-            {
-              "id": "supinated_iso",
-              "label": "Supinated DB Isometric Hold @ 90°",
-              "sets": 3,
-              "durationSeconds": 30,
-              "notes": "30 sec per side, Rest 60 sec",
-              "equipmentChoice": true
-            },
-            {
-              "id": "triceps_pressdown",
-              "label": "Triceps Pressdown",
-              "sets": 3,
-              "reps": "12-15",
-              "notes": "Rest 60-90 sec",
-              "equipmentChoice": true
-            },
-            {
-              "id": "aerobic_recovery",
-              "label": "Aerobic Recovery",
-              "details": "25-35 min - Easy bike, row, or walk. Conversational pace, nasal breathing."
+              "title": "Aerobic Recovery",
+              "exercises": [
+                { "id": "warmup_cardio_b", "label": "Cardio Warm Up", "durationSeconds": 120, "details": "2 min easy pace" },
+                { "id": "easy_bike_b", "label": "Easy Bike", "details": "20 min, conversational pace, nasal breathing" },
+                { "id": "cooldown_cardio_b", "label": "Cardio Cooldown", "details": "Standing quad stretch 45s/side, Calf stretch 45s/side, Figure-4 stretch 60s/side, Cat-cow 10 reps, Crocodile breathing 2 min" }
+              ]
             }
           ]
         },
         {
-          "id": "unit_c",
-          "name": "Unit C - Loaded Aerobic + Core",
-          "days": [3],
-          "notes": "Nasal breathing only",
-          "exercises": [
+          "id": "phase1_c",
+          "name": "PHASE1-C: Loaded Conditioning + Core + Loaded Walk",
+          "order": 2,
+          "notes": "Strength Training + Loaded Walk",
+          "sections": [
             {
-              "id": "loaded_walk",
-              "label": "Loaded Walk",
-              "details": "30-45 min @ 40-60 lb vest/pack. Continuous steady pace, nasal breathing only."
+              "title": "Warm Up",
+              "exercises": [
+                { "id": "warmup_c", "label": "General Warm Up", "durationSeconds": 300, "details": "5 minutes dynamic warm-up" }
+              ]
             },
             {
-              "id": "dead_bug",
-              "label": "Dead Bug",
-              "sets": 3,
-              "reps": "10",
-              "notes": "Rest 30-45 sec"
+              "title": "Core + Conditioning",
+              "exercises": [
+                { "id": "dead_bug", "label": "Dead Bug", "sets": 3, "reps": "16 (8/side)", "notes": "Rest 0:30 between sets", "restSeconds": 30 },
+                { "id": "side_plank_l", "label": "Side Plank (Left only)", "sets": 3, "durationSeconds": 30, "notes": "30 sec hold, Rest 0:30", "restSeconds": 30 },
+                { "id": "pallof_press", "label": "Pallof Press (or Cable Wood Chop)", "sets": 3, "reps": "10/side", "notes": "Rest 0:45 between sets", "equipmentChoice": true, "restSeconds": 45 },
+                { "id": "farmer_walk", "label": "Farmer's Walk", "sets": 3, "reps": "30m/side", "notes": "Rest 1:00 between sets", "equipmentChoice": true, "restSeconds": 60 },
+                { "id": "cable_hip_abd", "label": "Cable Hip Abduction", "sets": 2, "reps": "15/side", "notes": "Rest 0:45 between sets", "equipmentChoice": true, "restSeconds": 45 },
+                { "id": "wall_sit", "label": "Wall Sit (with abduction press)", "sets": 3, "durationSeconds": 30, "notes": "30 sec hold, Rest 0:30", "restSeconds": 30 },
+                { "id": "glute_bridge_hold", "label": "Glute Bridge Hold", "sets": 3, "durationSeconds": 30, "notes": "30 sec hold, Rest 0:30", "restSeconds": 30 }
+              ]
             },
             {
-              "id": "side_plank",
-              "label": "Side Plank",
-              "sets": 3,
-              "durationSeconds": 45,
-              "notes": "45 sec per side, Rest 30 sec"
+              "title": "Cooldown Stretches",
+              "exercises": [
+                { "id": "cooldown_c", "label": "Cooldown Stretches", "details": "90/90 hip stretch 60s/side, Kneeling hip flexor stretch 45s/side, Child's pose 60s, Cat-cow 10 reps, Crocodile breathing 2 min" }
+              ]
             },
             {
-              "id": "suitcase_carry",
-              "label": "Suitcase Carry",
-              "sets": 4,
-              "reps": "40m/side",
-              "notes": "Rest 60-90 sec",
-              "equipmentChoice": true
-            },
-            {
-              "id": "pallof_press",
-              "label": "Pallof Press Hold",
-              "sets": 3,
-              "durationSeconds": 30,
-              "notes": "30 sec per side, Rest 45-60 sec",
-              "equipmentChoice": true
+              "title": "Loaded Walk",
+              "exercises": [
+                { "id": "warmup_walk_c", "label": "Walk Warm Up", "durationSeconds": 180, "details": "3 min unloaded, easy pace" },
+                { "id": "loaded_walk_c", "label": "Loaded Walk", "details": "20-30 min with 30 lb vest, nasal breathing only" },
+                { "id": "cooldown_walk_c", "label": "Walk Cooldown", "details": "Calf stretch 45s/side, Standing quad stretch 45s/side, Hip flexor stretch 60s/side, 90/90 hip stretch 60s/side, Crocodile breathing 2 min" }
+              ]
             }
           ]
         },
         {
-          "id": "unit_d",
-          "name": "Unit D - Hinge + Short Conditional Aerobic",
-          "days": [4],
-          "notes": "Main lift RPE 6-7",
-          "exercises": [
+          "id": "phase1_d",
+          "name": "PHASE1-D: Posterior Chain + Bike Intervals",
+          "order": 3,
+          "notes": "Strength Training + Interval Cardio. Note: Trap Bar Deadlift lighter (RPE 5-6) - focus on movement quality.",
+          "sections": [
             {
-              "id": "trap_bar_deadlift",
-              "label": "Trap Bar Deadlift",
-              "sets": 4,
-              "reps": "3",
-              "notes": "RPE 6-7, Smooth no hitch, Rest 2-3 min",
-              "equipmentChoice": true
+              "title": "Warm Up",
+              "exercises": [
+                { "id": "warmup_d", "label": "General Warm Up", "durationSeconds": 300, "details": "5 minutes dynamic warm-up" }
+              ]
             },
             {
-              "id": "step_ups",
-              "label": "Step-Ups (Loaded)",
-              "sets": 3,
-              "reps": "8/side",
-              "notes": "Rest 90 sec",
-              "equipmentChoice": true
+              "title": "Strength - Posterior Chain",
+              "exercises": [
+                { "id": "trap_bar_dl_d", "label": "Trap Bar Deadlift", "sets": 3, "reps": "5", "notes": "RPE 5-6, focus on movement quality. Rest 2:00", "equipmentChoice": true, "restSeconds": 120 },
+                { "id": "sl_rdl", "label": "Single-Leg Romanian Deadlift", "sets": 3, "reps": "8/side", "notes": "Rest 1:30 between sets", "equipmentChoice": true, "restSeconds": 90 },
+                { "id": "glute_bridge_d", "label": "Glute Bridge", "sets": 3, "reps": "12", "notes": "Rest 1:00 between sets", "equipmentChoice": true, "restSeconds": 60 },
+                { "id": "leg_curl_d", "label": "Leg Curl", "sets": 3, "reps": "10", "notes": "Rest 1:00 between sets", "equipmentChoice": true, "restSeconds": 60 },
+                { "id": "prone_y_raise", "label": "Prone Y Raise", "sets": 2, "reps": "8", "notes": "Rest 0:30 between sets", "restSeconds": 30 },
+                { "id": "prone_t_raise", "label": "Prone T Raise", "sets": 2, "reps": "8", "notes": "Rest 0:30 between sets", "restSeconds": 30 }
+              ]
             },
             {
-              "id": "ham_curl_d",
-              "label": "Hamstring Curl",
-              "sets": 3,
-              "reps": "8-10",
-              "notes": "Rest 60-90 sec",
-              "equipmentChoice": true
+              "title": "Cooldown Stretches",
+              "exercises": [
+                { "id": "cooldown_d", "label": "Cooldown Stretches", "details": "Standing hamstring stretch 45s/side, Pigeon pose 60s/side, 90/90 hip stretch 60s/side, Cat-cow 10 reps, Child's pose 60s, Crocodile breathing 2 min" }
+              ]
             },
             {
-              "id": "short_aerobic",
-              "label": "Short Aerobic (Choose One)",
-              "details": "Option 1: Sled Push 6-10×20m | Option 2: Bike 6×2min moderate/2min easy | Option 3: Step-Up 10min continuous"
+              "title": "Bike Intervals",
+              "exercises": [
+                { "id": "interval_warmup", "label": "Easy Bike Warm Up", "durationSeconds": 300, "details": "5 min easy pace" },
+                { "id": "intervals_d", "label": "Intervals (4-5 rounds)", "details": "2:00 moderate effort (mouth breathing OK) / 3:00 easy recovery (nasal only). Repeat 4-5 rounds." },
+                { "id": "cooldown_cardio_d", "label": "Cardio Cooldown", "details": "Standing quad stretch 45s/side, Calf stretch 45s/side, Hip flexor stretch 60s/side, Cat-cow 10 reps, Crocodile breathing 2 min" }
+              ]
             }
           ]
         },
         {
-          "id": "unit_e",
-          "name": "Unit E - Long Easy + Mobility (Optional)",
-          "days": [5],
-          "notes": "Recovery day",
-          "exercises": [
+          "id": "phase1_r1",
+          "name": "PHASE1-R1: Recovery + Mobility",
+          "order": 4,
+          "notes": "Flexibility/Yoga / Light Strength. Full recovery session.",
+          "sections": [
             {
-              "id": "long_easy",
-              "label": "Long Easy Aerobic",
-              "details": "45-75 min - Walk, hike, or bike. Easy, nasal breathing."
+              "title": "Soft Tissue Work",
+              "exercises": [
+                { "id": "r1_foam_roll", "label": "Foam Roll (glutes, TFL, lats)", "durationSeconds": 360, "details": "6 min total, 2 min each area" },
+                { "id": "r1_lacrosse_ball", "label": "Lacrosse Ball (forearm extensors)", "durationSeconds": 240, "details": "4 min total, 2 min per side" },
+                { "id": "r1_pec_release", "label": "Pec Minor Release", "durationSeconds": 240, "details": "4 min total, 2 min per side" }
+              ]
             },
             {
-              "id": "extended_mobility",
-              "label": "Extended Mobility",
-              "details": "20-30 min - Focus: Hips, T-spine, forearms"
+              "title": "Mobility (CARs)",
+              "exercises": [
+                { "id": "r1_elbow_cars", "label": "Elbow CARs", "sets": 1, "reps": "3/side", "notes": "Slow, full ROM" },
+                { "id": "r1_shoulder_cars", "label": "Shoulder CARs", "sets": 1, "reps": "3/side", "notes": "Avoid IR end range" },
+                { "id": "r1_hip_cars", "label": "Hip CARs", "sets": 1, "reps": "3/side" }
+              ]
+            },
+            {
+              "title": "Light Exercises",
+              "exercises": [
+                { "id": "r1_prone_y", "label": "Prone Y Raise", "sets": 2, "reps": "10", "notes": "Light weight", "restSeconds": 30 },
+                { "id": "r1_prone_t", "label": "Prone T Raise", "sets": 2, "reps": "10", "notes": "Light weight", "restSeconds": 30 },
+                { "id": "r1_face_pull", "label": "Face Pull", "sets": 3, "reps": "15", "notes": "Light weight", "restSeconds": 30 },
+                { "id": "r1_cable_ext_rot", "label": "Cable External Rotation", "sets": 3, "reps": "15/side", "notes": "Light weight", "restSeconds": 30 },
+                { "id": "r1_wall_sit_abd", "label": "Wall Sit Abduction Press", "sets": 5, "durationSeconds": 45, "notes": "30-45 sec hold, isometric", "restSeconds": 30 },
+                { "id": "r1_glute_bridge", "label": "Glute Bridge Hold", "sets": 3, "durationSeconds": 30, "notes": "30 sec hold", "restSeconds": 30 }
+              ]
+            },
+            {
+              "title": "Mobility Stretches",
+              "exercises": [
+                { "id": "r1_9090", "label": "90/90 Hip Stretch", "durationSeconds": 120, "details": "2 min per side" },
+                { "id": "r1_tspine_openbooks", "label": "T-Spine Open Books", "sets": 1, "reps": "10/side" },
+                { "id": "r1_ankle_df", "label": "Banded Ankle Dorsiflexion", "sets": 1, "reps": "15/side" },
+                { "id": "r1_wall_slides", "label": "Wall Slides", "sets": 2, "reps": "10", "restSeconds": 30 }
+              ]
+            },
+            {
+              "title": "Breathing",
+              "exercises": [
+                { "id": "r1_croc_breathing", "label": "Crocodile Breathing", "durationSeconds": 180, "details": "3 min" },
+                { "id": "r1_box_breathing", "label": "Box Breathing (4-4-4-4)", "durationSeconds": 120, "details": "2 min" }
+              ]
+            },
+            {
+              "title": "Optional",
+              "exercises": [
+                { "id": "r1_easy_walk", "label": "Easy Walk", "details": "20-30 min, nasal only" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "phase1_r2",
+          "name": "PHASE1-R2: Active Recovery",
+          "order": 5,
+          "notes": "Walk or Cardio + Mobility",
+          "sections": [
+            {
+              "title": "Cardio",
+              "exercises": [
+                { "id": "r2_warmup", "label": "Warm Up", "durationSeconds": 120, "details": "2 min easy" },
+                { "id": "r2_easy_cardio", "label": "Easy Walk/Hike/Bike", "details": "40-60 min, nasal breathing, conversational pace" }
+              ]
+            },
+            {
+              "title": "Mobility - Hip Focus",
+              "exercises": [
+                { "id": "r2_hip_mobility", "label": "Hip Mobility", "durationSeconds": 600, "details": "10 min: 90/90, hip flexor, pigeon stretches" }
+              ]
+            },
+            {
+              "title": "Mobility - T-Spine Focus",
+              "exercises": [
+                { "id": "r2_tspine", "label": "T-Spine Mobility", "durationSeconds": 300, "details": "5 min: Open books, cat-cow" }
+              ]
+            },
+            {
+              "title": "Mobility - Forearm Focus",
+              "exercises": [
+                { "id": "r2_forearm", "label": "Forearm Mobility", "durationSeconds": 300, "details": "5 min: Extensor/flexor stretches" }
+              ]
+            },
+            {
+              "title": "Grip Maintenance",
+              "exercises": [
+                { "id": "r2_towel_hang", "label": "Towel Hang", "sets": 2, "durationSeconds": 15, "notes": "15 sec hold", "restSeconds": 30 },
+                { "id": "r2_finger_ext", "label": "Finger Extensions (band)", "sets": 2, "reps": "20", "restSeconds": 30 }
+              ]
             }
           ]
         }

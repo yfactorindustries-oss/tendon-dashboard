@@ -118,6 +118,11 @@ function getTodayState() {
       };
     }
   }
+  // Ensure _global and rotation state exist
+  if (!state._global) state._global = {};
+  if (!state._global.rotation) {
+    state._global.rotation = { currentIndex: 0, lastCompletedWorkoutId: null, lastCompletedDate: null };
+  }
   return state[todayStr];
 }
 
@@ -215,8 +220,9 @@ function computeDayCompliance(dateStr) {
   // Workout compliance
   const workout = getWorkoutForDate(dateStr);
   let workoutScore = 100;
-  if (workout && workout.exercises) {
-    const workoutExpected = workout.exercises.reduce((sum, ex) => sum + ex.sets, 0);
+  if (workout) {
+    const allExercises = getAllWorkoutExercises(workout);
+    const workoutExpected = allExercises.reduce((sum, ex) => sum + (ex.sets || 0), 0);
     const workoutCompleted = Object.values(workoutDone).reduce((sum, exSets) => {
       return sum + Object.values(exSets).filter(Boolean).length;
     }, 0);
@@ -248,9 +254,21 @@ function updateTodayCompliance() {
 
 // Get workout for a specific date
 function getWorkoutForDate(dateStr) {
+  const currentBlock = getCurrentBlock();
+
+  // For sequential rotation, look up which workout was done that day from stored state
+  if (currentBlock && currentBlock.rotationType === 'sequential') {
+    const dayState = state[dateStr];
+    if (dayState && dayState.sessionMeta && dayState.sessionMeta.workoutId) {
+      return (currentBlock.workouts || []).find(w => w.id === dayState.sessionMeta.workoutId) || null;
+    }
+    return null;
+  }
+
+  // Legacy weekday-based
   const d = new Date(dateStr);
   const dayOfWeek = d.getDay();
-  const workouts = appConfig.workouts || [];
+  const workouts = (currentBlock && currentBlock.workouts) || appConfig.workouts || [];
   const workout = workouts.find(w => w.days && w.days.includes(dayOfWeek));
   return workout || null;
 }
@@ -537,7 +555,37 @@ function renderRehab() {
 
   let completedItems = 0;
 
-  items.forEach(item => {
+  // Check if items have categories for grouped rendering
+  const hasCategories = items.some(item => item.category);
+
+  if (hasCategories) {
+    const categoryOrder = ['morning', 'evening', 'shift'];
+    const categoryLabels = {
+      morning: 'Morning (5 min)',
+      evening: 'Evening (5 min)',
+      shift: 'Throughout Shift'
+    };
+
+    categoryOrder.forEach(cat => {
+      const catItems = items.filter(item => item.category === cat);
+      if (catItems.length === 0) return;
+
+      const subheading = document.createElement('div');
+      subheading.className = 'rehab-category-label';
+      subheading.textContent = categoryLabels[cat] || cat;
+      container.appendChild(subheading);
+
+      catItems.forEach(item => renderRehabItem(item));
+    });
+
+    // Render any items without a category
+    const uncategorized = items.filter(item => !item.category);
+    uncategorized.forEach(item => renderRehabItem(item));
+  } else {
+    items.forEach(item => renderRehabItem(item));
+  }
+
+  function renderRehabItem(item) {
     const row = document.createElement('div');
     row.className = 'list-item';
 
@@ -937,7 +985,7 @@ function renderRehab() {
     container.appendChild(row);
 
     if (cb.checked) completedItems++;
-  });
+  }
 
   const total = items.length;
   if (!total) {
@@ -968,6 +1016,16 @@ function getTodayWorkoutConfig() {
     if (manualWorkout) return manualWorkout;
   }
 
+  // Sequential rotation (Phase 1+)
+  if (currentBlock.rotationType === 'sequential') {
+    const rotation = (state._global && state._global.rotation) || { currentIndex: 0 };
+    const order = currentBlock.rotationOrder || [];
+    if (order.length === 0) return null;
+    const idx = rotation.currentIndex % order.length;
+    const workoutId = order[idx];
+    return (currentBlock.workouts || []).find(w => w.id === workoutId) || null;
+  }
+
   const weekday = new Date().getDay();
 
   // Support old rotation format (legacy configs)
@@ -978,11 +1036,420 @@ function getTodayWorkoutConfig() {
     }
   }
 
-  // New format: find workout where days array includes today's weekday
+  // Legacy format: find workout where days array includes today's weekday
   return (currentBlock.workouts || []).find(w => {
     const days = w.days || [];
     return days.includes(weekday);
   }) || null;
+}
+
+// Advance sequential rotation to next workout
+function advanceRotation() {
+  const currentBlock = getCurrentBlock();
+  if (!currentBlock || currentBlock.rotationType !== 'sequential') return;
+
+  const order = currentBlock.rotationOrder || [];
+  if (order.length === 0) return;
+
+  const rotation = state._global.rotation || { currentIndex: 0 };
+  const currentWorkout = getTodayWorkoutConfig();
+
+  rotation.lastCompletedWorkoutId = currentWorkout ? currentWorkout.id : null;
+  rotation.lastCompletedDate = todayStr;
+  rotation.currentIndex = (rotation.currentIndex + 1) % order.length;
+
+  state._global.rotation = rotation;
+  saveState();
+}
+
+// Helper: render a single exercise item into a container
+function renderExerciseItem(ex, container, workoutDone, workoutLoadsToday, workoutIsoSets, globalLoads) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'list-item';
+  wrapper.style.flexDirection = 'column';
+  wrapper.style.alignItems = 'stretch';
+
+  const titleRow = document.createElement('div');
+  titleRow.className = 'exercise-title';
+
+  if (ex.video) {
+    const link = document.createElement('a');
+    link.href = ex.video;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = ex.label;
+    link.className = 'exercise-link';
+    titleRow.appendChild(link);
+  } else {
+    titleRow.textContent = ex.label;
+  }
+
+  if (ex.equipment === 'speediance') {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.textContent = 'Speediance';
+    titleRow.appendChild(chip);
+  }
+
+  // Notes row (exercise-specific notes like RPE, rest info)
+  let notesRow = null;
+  if (ex.notes) {
+    notesRow = document.createElement('div');
+    notesRow.className = 'exercise-meta exercise-notes';
+    notesRow.textContent = ex.notes;
+  }
+
+  const metaRow = document.createElement('div');
+  metaRow.className = 'exercise-meta';
+  // Support both details format and sets/reps format
+  if (ex.details) {
+    metaRow.textContent = ex.details;
+  } else if (ex.sets && ex.reps) {
+    metaRow.textContent = `${ex.sets} sets • ${ex.reps}`;
+  } else if (ex.sets && ex.durationSeconds) {
+    metaRow.textContent = `${ex.sets} sets • ${formatSeconds(ex.durationSeconds)} each`;
+  } else if (ex.durationSeconds) {
+    metaRow.textContent = formatSeconds(ex.durationSeconds);
+  }
+
+  const isoSets = ex.sets && ex.sets > 0 ? ex.sets : 0;
+  const isoDuration = ex.durationSeconds && ex.durationSeconds > 0 ? ex.durationSeconds : 0;
+  const isoRest = ex.restSeconds && ex.restSeconds > 0 ? ex.restSeconds : 0;
+  const isIso = isoSets > 0 && isoDuration > 0;
+
+  // Duration-only timer (no sets, e.g. warm-up countdown)
+  let durationTimerRow = null;
+  if (!isIso && isoSets === 0 && isoDuration > 0) {
+    durationTimerRow = document.createElement('div');
+    durationTimerRow.className = 'timer-row';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'timer-btn';
+    btn.textContent = `Start ${formatSeconds(isoDuration)}`;
+
+    let intervalId = null;
+    let remaining = isoDuration;
+    let isPaused = false;
+
+    const pauseBtn = document.createElement('button');
+    pauseBtn.type = 'button';
+    pauseBtn.className = 'timer-control-btn';
+    pauseBtn.textContent = 'Pause';
+    pauseBtn.style.display = 'none';
+
+    const resetBtn = document.createElement('button');
+    resetBtn.type = 'button';
+    resetBtn.className = 'timer-control-btn';
+    resetBtn.textContent = 'Reset';
+    resetBtn.style.display = 'none';
+
+    const display = document.createElement('span');
+    display.className = 'timer-display';
+
+    btn.onclick = () => {
+      btn.style.display = 'none';
+      pauseBtn.style.display = 'inline-block';
+      resetBtn.style.display = 'inline-block';
+      remaining = isoDuration;
+      display.textContent = formatSeconds(remaining);
+
+      intervalId = setInterval(() => {
+        if (!isPaused) {
+          remaining -= 1;
+          if (remaining <= 0) {
+            clearInterval(intervalId);
+            intervalId = null;
+            pauseBtn.style.display = 'none';
+            resetBtn.style.display = 'none';
+            display.textContent = 'Done';
+            btn.textContent = 'Done';
+            btn.classList.add('done');
+            btn.style.display = 'inline-block';
+            isPaused = false;
+          } else {
+            display.textContent = formatSeconds(remaining);
+          }
+        }
+      }, 1000);
+    };
+
+    pauseBtn.onclick = () => {
+      isPaused = !isPaused;
+      pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+    };
+
+    resetBtn.onclick = () => {
+      if (intervalId) { clearInterval(intervalId); intervalId = null; }
+      isPaused = false;
+      remaining = isoDuration;
+      btn.style.display = 'inline-block';
+      pauseBtn.style.display = 'none';
+      resetBtn.style.display = 'none';
+      display.textContent = '';
+      pauseBtn.textContent = 'Pause';
+      btn.textContent = `Start ${formatSeconds(isoDuration)}`;
+      btn.classList.remove('done');
+    };
+
+    durationTimerRow.appendChild(btn);
+    durationTimerRow.appendChild(pauseBtn);
+    durationTimerRow.appendChild(resetBtn);
+    durationTimerRow.appendChild(display);
+  }
+
+  // Sets row (non-iso only)
+  let setsRow = null;
+  if (!isIso && ex.sets && ex.sets > 0 && !ex.durationSeconds) {
+    setsRow = document.createElement('div');
+    setsRow.className = 'sets-row';
+    const exState = workoutDone[ex.id] || {};
+    for (let i = 1; i <= ex.sets; i++) {
+      const pill = document.createElement('div');
+      pill.className = 'set-pill' + (exState[i] ? ' done' : '');
+      pill.textContent = `Set ${i}`;
+      pill.onclick = () => {
+        const newExState = { ...exState, [i]: !exState[i] };
+        setTodayState({
+          workoutDone: { ...workoutDone, [ex.id]: newExState }
+        });
+        renderWorkout();
+      };
+      setsRow.appendChild(pill);
+    }
+  }
+
+  // Load row (equipment choice with global memory)
+  let loadRow = null;
+  if (ex.equipmentChoice) {
+    loadRow = document.createElement('div');
+    loadRow.className = 'load-row';
+
+    const equipmentPrefs = state._global.equipmentPrefs || {};
+    const useSpeediance = equipmentPrefs[ex.id] || false;
+
+    // Free Weights option
+    const freeWeightsLabel = document.createElement('label');
+    freeWeightsLabel.className = 'equipment-option';
+    const freeWeightsCheckbox = document.createElement('input');
+    freeWeightsCheckbox.type = 'checkbox';
+    freeWeightsCheckbox.className = 'equipment-checkbox';
+    freeWeightsCheckbox.checked = !useSpeediance;
+    const freeWeightsText = document.createElement('span');
+    freeWeightsText.textContent = 'Free Weights';
+    freeWeightsCheckbox.onchange = () => {
+      if (freeWeightsCheckbox.checked) {
+        state._global.equipmentPrefs = { ...equipmentPrefs, [ex.id]: false };
+        saveState();
+        renderWorkout();
+      }
+    };
+    freeWeightsLabel.appendChild(freeWeightsCheckbox);
+    freeWeightsLabel.appendChild(freeWeightsText);
+    loadRow.appendChild(freeWeightsLabel);
+
+    // Speediance option
+    const speedianceLabel = document.createElement('label');
+    speedianceLabel.className = 'equipment-option';
+    const speedianceCheckbox = document.createElement('input');
+    speedianceCheckbox.type = 'checkbox';
+    speedianceCheckbox.className = 'equipment-checkbox';
+    speedianceCheckbox.checked = useSpeediance;
+    const speedianceText = document.createElement('span');
+    speedianceText.textContent = 'Speediance';
+    speedianceCheckbox.onchange = () => {
+      if (speedianceCheckbox.checked) {
+        state._global.equipmentPrefs = { ...equipmentPrefs, [ex.id]: true };
+        saveState();
+        renderWorkout();
+      }
+    };
+    speedianceLabel.appendChild(speedianceCheckbox);
+    speedianceLabel.appendChild(speedianceText);
+    loadRow.appendChild(speedianceLabel);
+
+    // Load input
+    const loadLabel = document.createElement('span');
+    loadLabel.textContent = 'Load:';
+    const loadInput = document.createElement('input');
+    loadInput.type = 'number';
+    loadInput.min = '0';
+    loadInput.step = '1';
+    const equipmentKey = useSpeediance ? `${ex.id}_speediance` : `${ex.id}_free`;
+    const todayVal = workoutLoadsToday[equipmentKey];
+    const globalVal = globalLoads[equipmentKey];
+    loadInput.value = (todayVal ?? globalVal) ?? '';
+    loadInput.onchange = () => {
+      const val = loadInput.value === '' ? null : Number(loadInput.value);
+      const newLoadsToday = { ...workoutLoadsToday, [equipmentKey]: val };
+      setTodayState({ workoutLoads: newLoadsToday });
+      const newGlobalLoads = { ...globalLoads, [equipmentKey]: val };
+      setGlobalLoads(newGlobalLoads);
+    };
+    const loadUnit = document.createElement('span');
+    loadUnit.textContent = 'lb';
+    loadRow.appendChild(loadLabel);
+    loadRow.appendChild(loadInput);
+    loadRow.appendChild(loadUnit);
+  }
+
+  // Iso timers (sets with duration, e.g. isometric holds)
+  let isoRow = null;
+  if (isIso) {
+    const isoState = workoutIsoSets[ex.id] || {};
+    isoRow = document.createElement('div');
+    isoRow.className = 'timer-row';
+
+    for (let i = 1; i <= isoSets; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'timer-btn' + (isoState[i] ? ' done' : '');
+      btn.textContent = isoState[i] ? 'Done' : `Start ${formatSeconds(isoDuration)}`;
+
+      let timerId = null;
+      let isPaused = false;
+      let phase = 'hold';
+      let remaining = isoDuration;
+
+      const pauseBtn = document.createElement('button');
+      pauseBtn.type = 'button';
+      pauseBtn.className = 'timer-control-btn';
+      pauseBtn.textContent = 'Pause';
+      pauseBtn.style.display = 'none';
+
+      const resetBtn = document.createElement('button');
+      resetBtn.type = 'button';
+      resetBtn.className = 'timer-control-btn';
+      resetBtn.textContent = 'Reset';
+      resetBtn.style.display = 'none';
+
+      const display = document.createElement('span');
+      display.className = 'timer-display';
+      if (isoState[i]) display.textContent = 'Done';
+
+      btn.onclick = () => {
+        if (isoState[i]) return;
+        btn.style.display = 'none';
+        pauseBtn.style.display = 'inline-block';
+        resetBtn.style.display = 'inline-block';
+        phase = 'hold';
+        remaining = isoDuration;
+        display.textContent = `Hold ${formatSeconds(remaining)}`;
+
+        timerId = setInterval(() => {
+          if (!isPaused) {
+            remaining -= 1;
+            if (remaining <= 0) {
+              if (phase === 'hold' && isoRest > 0) {
+                phase = 'rest';
+                remaining = isoRest;
+                display.textContent = `Rest ${formatSeconds(remaining)}`;
+                return;
+              } else {
+                clearInterval(timerId);
+                timerId = null;
+                pauseBtn.style.display = 'none';
+                resetBtn.style.display = 'none';
+                display.textContent = 'Done';
+                btn.textContent = 'Done';
+                btn.classList.add('done');
+                btn.style.display = 'inline-block';
+                const newIsoState = { ...isoState, [i]: true };
+                const newWorkoutIsoSets = { ...workoutIsoSets, [ex.id]: newIsoState };
+                setTodayState({ workoutIsoSets: newWorkoutIsoSets });
+                isPaused = false;
+                renderWorkout();
+              }
+            } else {
+              display.textContent =
+                (phase === 'hold'
+                  ? `Hold ${formatSeconds(remaining)}`
+                  : `Rest ${formatSeconds(remaining)}`);
+            }
+          }
+        }, 1000);
+      };
+
+      pauseBtn.onclick = () => {
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+      };
+
+      resetBtn.onclick = () => {
+        if (timerId) { clearInterval(timerId); timerId = null; }
+        isPaused = false;
+        phase = 'hold';
+        remaining = isoDuration;
+        btn.style.display = 'inline-block';
+        pauseBtn.style.display = 'none';
+        resetBtn.style.display = 'none';
+        display.textContent = '';
+        pauseBtn.textContent = 'Pause';
+      };
+
+      isoRow.appendChild(btn);
+      isoRow.appendChild(pauseBtn);
+      isoRow.appendChild(resetBtn);
+      isoRow.appendChild(display);
+    }
+  }
+
+  // Rest timer (non-iso only)
+  let restRow = null;
+  if (!isIso && ex.restSeconds && ex.restSeconds > 0 && !ex.durationSeconds) {
+    restRow = document.createElement('div');
+    restRow.className = 'timer-row';
+
+    const restBtn = document.createElement('button');
+    restBtn.type = 'button';
+    restBtn.className = 'timer-btn';
+    restBtn.textContent = `Rest ${formatSeconds(ex.restSeconds)}`;
+
+    const restDisplay = document.createElement('span');
+    restDisplay.className = 'timer-display';
+    restDisplay.textContent = '';
+
+    restBtn.onclick = () => {
+      let remaining = ex.restSeconds;
+      restBtn.disabled = true;
+      restDisplay.textContent = formatSeconds(remaining);
+      const id = setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+          clearInterval(id);
+          restDisplay.textContent = 'Rest done';
+          restBtn.disabled = false;
+        } else {
+          restDisplay.textContent = formatSeconds(remaining);
+        }
+      }, 1000);
+    };
+
+    restRow.appendChild(restBtn);
+    restRow.appendChild(restDisplay);
+  }
+
+  // Append in clean order
+  wrapper.appendChild(titleRow);
+  wrapper.appendChild(metaRow);
+  if (notesRow) wrapper.appendChild(notesRow);
+  if (durationTimerRow) wrapper.appendChild(durationTimerRow);
+  if (setsRow) wrapper.appendChild(setsRow);
+  if (loadRow) wrapper.appendChild(loadRow);
+  if (isoRow) wrapper.appendChild(isoRow);
+  if (restRow) wrapper.appendChild(restRow);
+
+  container.appendChild(wrapper);
+}
+
+// Get all exercises from a workout (handles both flat and sectioned formats)
+function getAllWorkoutExercises(workout) {
+  if (workout.sections) {
+    let allExercises = [];
+    workout.sections.forEach(s => { allExercises = allExercises.concat(s.exercises || []); });
+    return allExercises;
+  }
+  return workout.exercises || [];
 }
 
 function renderWorkout() {
@@ -993,6 +1460,7 @@ function renderWorkout() {
   contentEl.innerHTML = '';
 
   const workout = getTodayWorkoutConfig();
+  const currentBlock = getCurrentBlock();
   const todayState = getTodayState();
   const workoutDone = todayState.workoutDone || {};
   const workoutLoadsToday = todayState.workoutLoads || {};
@@ -1007,322 +1475,59 @@ function renderWorkout() {
     return;
   }
 
+  // Store workoutId in sessionMeta for historical lookups
+  if (!todayState.sessionMeta.workoutId) {
+    setTodayState({
+      sessionMeta: { ...todayState.sessionMeta, workoutId: workout.id }
+    });
+  }
+
   titleEl.textContent = workout.name || "Today's Session";
   subtitleEl.textContent = workout.notes || '';
 
-  (workout.exercises || []).forEach(ex => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'list-item';
-    wrapper.style.flexDirection = 'column';
-    wrapper.style.alignItems = 'stretch';
+  // Render exercises - support both sectioned and flat formats
+  if (workout.sections && workout.sections.length > 0) {
+    workout.sections.forEach(section => {
+      const sectionHeader = document.createElement('div');
+      sectionHeader.className = 'section-header';
+      sectionHeader.textContent = section.title;
+      contentEl.appendChild(sectionHeader);
 
-    const titleRow = document.createElement('div');
-    titleRow.className = 'exercise-title';
+      (section.exercises || []).forEach(ex => {
+        renderExerciseItem(ex, contentEl, workoutDone, workoutLoadsToday, workoutIsoSets, globalLoads);
+      });
+    });
+  } else {
+    (workout.exercises || []).forEach(ex => {
+      renderExerciseItem(ex, contentEl, workoutDone, workoutLoadsToday, workoutIsoSets, globalLoads);
+    });
+  }
 
-    if (ex.video) {
-      const link = document.createElement('a');
-      link.href = ex.video;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.textContent = ex.label;
-      link.className = 'exercise-link';
-      titleRow.appendChild(link);
+  // "Complete Workout & Advance" button for sequential rotation
+  if (workout && currentBlock && currentBlock.rotationType === 'sequential') {
+    const completeBtn = document.createElement('button');
+    completeBtn.type = 'button';
+    completeBtn.className = 'complete-workout-btn';
+    const alreadyCompleted = todayState.sessionMeta && todayState.sessionMeta.workoutCompleted;
+
+    if (alreadyCompleted) {
+      completeBtn.textContent = 'Workout Completed';
+      completeBtn.disabled = true;
+      completeBtn.classList.add('done');
     } else {
-      titleRow.textContent = ex.label;
-    }
-
-    if (ex.equipment === 'speediance') {
-      const chip = document.createElement('span');
-      chip.className = 'chip';
-      chip.textContent = 'Speediance';
-      titleRow.appendChild(chip);
-    }
-
-    const metaRow = document.createElement('div');
-    metaRow.className = 'exercise-meta';
-    // Support both details format and sets/reps format
-    if (ex.details) {
-      metaRow.textContent = ex.details;
-    } else {
-      metaRow.textContent = `${ex.sets} sets • ${ex.reps}`;
-    }
-
-    const isoSets = ex.sets && ex.sets > 0 ? ex.sets : 0;
-    const isoDuration = ex.durationSeconds && ex.durationSeconds > 0 ? ex.durationSeconds : 0;
-    const isoRest = ex.restSeconds && ex.restSeconds > 0 ? ex.restSeconds : 0;
-    const isIso = isoSets > 0 && isoDuration > 0;
-
-    // Sets row (non-iso only)
-    let setsRow = null;
-    if (!isIso) {
-      setsRow = document.createElement('div');
-      setsRow.className = 'sets-row';
-      const exState = workoutDone[ex.id] || {};
-      for (let i = 1; i <= ex.sets; i++) {
-        const pill = document.createElement('div');
-        pill.className = 'set-pill' + (exState[i] ? ' done' : '');
-        pill.textContent = `Set ${i}`;
-        pill.onclick = () => {
-          const newExState = { ...exState, [i]: !exState[i] };
-          setTodayState({
-            workoutDone: { ...workoutDone, [ex.id]: newExState }
-          });
-          renderWorkout();
-        };
-        setsRow.appendChild(pill);
-      }
-    }
-
-    // Load row (equipment choice with global memory)
-    let loadRow = null;
-    if (ex.equipmentChoice) {
-      loadRow = document.createElement('div');
-      loadRow.className = 'load-row';
-
-      // Equipment selector with two options
-      const equipmentPrefs = state._global.equipmentPrefs || {};
-      const useSpeediance = equipmentPrefs[ex.id] || false;
-
-      // Free Weights option
-      const freeWeightsLabel = document.createElement('label');
-      freeWeightsLabel.className = 'equipment-option';
-
-      const freeWeightsCheckbox = document.createElement('input');
-      freeWeightsCheckbox.type = 'checkbox';
-      freeWeightsCheckbox.className = 'equipment-checkbox';
-      freeWeightsCheckbox.checked = !useSpeediance;
-
-      const freeWeightsText = document.createElement('span');
-      freeWeightsText.textContent = 'Free Weights';
-
-      freeWeightsCheckbox.onchange = () => {
-        if (freeWeightsCheckbox.checked) {
-          const newPrefs = { ...equipmentPrefs, [ex.id]: false };
-          state._global.equipmentPrefs = newPrefs;
-          saveState();
-          renderWorkout();
-        }
+      completeBtn.textContent = 'Complete Workout & Advance';
+      completeBtn.onclick = () => {
+        advanceRotation();
+        setTodayState({
+          sessionMeta: { ...getTodayState().sessionMeta, workoutCompleted: true }
+        });
+        updateTodayCompliance();
+        renderWorkout();
+        setupWorkoutSelector();
       };
-
-      freeWeightsLabel.appendChild(freeWeightsCheckbox);
-      freeWeightsLabel.appendChild(freeWeightsText);
-      loadRow.appendChild(freeWeightsLabel);
-
-      // Speediance option
-      const speedianceLabel = document.createElement('label');
-      speedianceLabel.className = 'equipment-option';
-
-      const speedianceCheckbox = document.createElement('input');
-      speedianceCheckbox.type = 'checkbox';
-      speedianceCheckbox.className = 'equipment-checkbox';
-      speedianceCheckbox.checked = useSpeediance;
-
-      const speedianceText = document.createElement('span');
-      speedianceText.textContent = 'Speediance';
-
-      speedianceCheckbox.onchange = () => {
-        if (speedianceCheckbox.checked) {
-          const newPrefs = { ...equipmentPrefs, [ex.id]: true };
-          state._global.equipmentPrefs = newPrefs;
-          saveState();
-          renderWorkout();
-        }
-      };
-
-      speedianceLabel.appendChild(speedianceCheckbox);
-      speedianceLabel.appendChild(speedianceText);
-      loadRow.appendChild(speedianceLabel);
-
-      // Load input
-      const loadLabel = document.createElement('span');
-      loadLabel.textContent = 'Load:';
-
-      const loadInput = document.createElement('input');
-      loadInput.type = 'number';
-      loadInput.min = '0';
-      loadInput.step = '1';
-
-      // Determine equipment key for load storage
-      const equipmentKey = useSpeediance ? `${ex.id}_speediance` : `${ex.id}_free`;
-
-      const todayVal = workoutLoadsToday[equipmentKey];
-      const globalVal = globalLoads[equipmentKey];
-      loadInput.value = (todayVal ?? globalVal) ?? '';
-
-      loadInput.onchange = () => {
-        const val = loadInput.value === '' ? null : Number(loadInput.value);
-
-        const newLoadsToday = { ...workoutLoadsToday, [equipmentKey]: val };
-        setTodayState({ workoutLoads: newLoadsToday });
-
-        const newGlobalLoads = { ...globalLoads, [equipmentKey]: val };
-        setGlobalLoads(newGlobalLoads);
-      };
-
-      const loadUnit = document.createElement('span');
-      loadUnit.textContent = 'lb';
-
-      loadRow.appendChild(loadLabel);
-      loadRow.appendChild(loadInput);
-      loadRow.appendChild(loadUnit);
     }
-
-    // Iso timers
-    let isoRow = null;
-    if (isIso) {
-      const isoState = workoutIsoSets[ex.id] || {};
-      isoRow = document.createElement('div');
-      isoRow.className = 'timer-row';
-
-      for (let i = 1; i <= isoSets; i++) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'timer-btn' + (isoState[i] ? ' done' : '');
-        btn.textContent = isoState[i] ? 'Done' : `Start ${formatSeconds(isoDuration)}`;
-
-        let timerId = null;
-        let isPaused = false;
-        let phase = 'hold';
-        let remaining = isoDuration;
-
-        const pauseBtn = document.createElement('button');
-        pauseBtn.type = 'button';
-        pauseBtn.className = 'timer-control-btn';
-        pauseBtn.textContent = 'Pause';
-        pauseBtn.style.display = 'none';
-
-        const resetBtn = document.createElement('button');
-        resetBtn.type = 'button';
-        resetBtn.className = 'timer-control-btn';
-        resetBtn.textContent = 'Reset';
-        resetBtn.style.display = 'none';
-
-        const display = document.createElement('span');
-        display.className = 'timer-display';
-        if (isoState[i]) display.textContent = 'Done';
-
-        btn.onclick = () => {
-          if (isoState[i]) return;
-
-          // Hide start button, show controls
-          btn.style.display = 'none';
-          pauseBtn.style.display = 'inline-block';
-          resetBtn.style.display = 'inline-block';
-
-          phase = 'hold';
-          remaining = isoDuration;
-          display.textContent = `Hold ${formatSeconds(remaining)}`;
-
-          timerId = setInterval(() => {
-            if (!isPaused) {
-              remaining -= 1;
-
-              if (remaining <= 0) {
-                if (phase === 'hold' && isoRest > 0) {
-                  phase = 'rest';
-                  remaining = isoRest;
-                  display.textContent = `Rest ${formatSeconds(remaining)}`;
-                  return;
-                } else {
-                  clearInterval(timerId);
-                  timerId = null;
-                  pauseBtn.style.display = 'none';
-                  resetBtn.style.display = 'none';
-                  display.textContent = 'Done';
-                  btn.textContent = 'Done';
-                  btn.classList.add('done');
-                  btn.style.display = 'inline-block';
-
-                  const newIsoState = { ...isoState, [i]: true };
-                  const newWorkoutIsoSets = { ...workoutIsoSets, [ex.id]: newIsoState };
-                  setTodayState({ workoutIsoSets: newWorkoutIsoSets });
-
-                  isPaused = false;
-                  renderWorkout();
-                }
-              } else {
-                display.textContent =
-                  (phase === 'hold'
-                    ? `Hold ${formatSeconds(remaining)}`
-                    : `Rest ${formatSeconds(remaining)}`);
-              }
-            }
-          }, 1000);
-        };
-
-        pauseBtn.onclick = () => {
-          isPaused = !isPaused;
-          pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
-        };
-
-        resetBtn.onclick = () => {
-          if (timerId) {
-            clearInterval(timerId);
-            timerId = null;
-          }
-          isPaused = false;
-          phase = 'hold';
-          remaining = isoDuration;
-          btn.style.display = 'inline-block';
-          pauseBtn.style.display = 'none';
-          resetBtn.style.display = 'none';
-          display.textContent = '';
-          pauseBtn.textContent = 'Pause';
-        };
-
-        isoRow.appendChild(btn);
-        isoRow.appendChild(pauseBtn);
-        isoRow.appendChild(resetBtn);
-        isoRow.appendChild(display);
-      }
-    }
-
-    // Rest timer (non-iso only)
-    let restRow = null;
-    if (!isIso && ex.restSeconds && ex.restSeconds > 0) {
-      restRow = document.createElement('div');
-      restRow.className = 'timer-row';
-
-      const restBtn = document.createElement('button');
-      restBtn.type = 'button';
-      restBtn.className = 'timer-btn';
-      restBtn.textContent = `Rest ${ex.restSeconds}s`;
-
-      const restDisplay = document.createElement('span');
-      restDisplay.className = 'timer-display';
-      restDisplay.textContent = '';
-
-      restBtn.onclick = () => {
-        let remaining = ex.restSeconds;
-        restBtn.disabled = true;
-        restDisplay.textContent = formatSeconds(remaining);
-        const id = setInterval(() => {
-          remaining -= 1;
-          if (remaining <= 0) {
-            clearInterval(id);
-            restDisplay.textContent = 'Rest done';
-            restBtn.disabled = false;
-          } else {
-            restDisplay.textContent = formatSeconds(remaining);
-          }
-        }, 1000);
-      };
-
-      restRow.appendChild(restBtn);
-      restRow.appendChild(restDisplay);
-    }
-
-    // Append in clean order
-    wrapper.appendChild(titleRow);
-    wrapper.appendChild(metaRow);
-
-    if (setsRow) wrapper.appendChild(setsRow);
-    if (loadRow) wrapper.appendChild(loadRow);
-    if (isoRow) wrapper.appendChild(isoRow);
-    if (restRow) wrapper.appendChild(restRow);
-
-    contentEl.appendChild(wrapper);
-  });
+    contentEl.appendChild(completeBtn);
+  }
 
   // Setup session notes (only show if there's a workout)
   setupSessionNotes();
@@ -1418,6 +1623,15 @@ function renderAll() {
 async function initConfig() {
   const stored = loadStoredConfig();
   if (stored) {
+    // Check if stored config is outdated by comparing configVersion
+    try {
+      const res = await fetch('config.json');
+      const fresh = await res.json();
+      if (fresh.configVersion && (!stored.configVersion || fresh.configVersion > stored.configVersion)) {
+        saveConfig(fresh);
+        return;
+      }
+    } catch { /* offline or error, use stored */ }
     appConfig = stored;
     return;
   }
@@ -1487,8 +1701,25 @@ function setupWorkoutSelector() {
   const currentBlock = getCurrentBlock();
   if (!currentBlock || !currentBlock.workouts) return;
 
-  // Clear existing options except the first "Auto" option
-  selector.innerHTML = '<option value="">Auto (Scheduled)</option>';
+  // Clean up stale manual override (if referencing a workout that no longer exists)
+  const staleOverride = localStorage.getItem('manualWorkoutOverride');
+  if (staleOverride && !currentBlock.workouts.some(w => w.id === staleOverride)) {
+    localStorage.removeItem('manualWorkoutOverride');
+  }
+
+  // Build the "auto" label based on rotation type
+  let autoLabel = 'Auto (Scheduled)';
+  if (currentBlock.rotationType === 'sequential') {
+    const rotation = (state._global && state._global.rotation) || { currentIndex: 0 };
+    const order = currentBlock.rotationOrder || [];
+    const idx = rotation.currentIndex % order.length;
+    const nextWorkout = currentBlock.workouts.find(w => w.id === order[idx]);
+    if (nextWorkout) {
+      autoLabel = `Next: ${nextWorkout.name}`;
+    }
+  }
+
+  selector.innerHTML = `<option value="">${autoLabel}</option>`;
 
   // Add all workouts from current block
   currentBlock.workouts.forEach(workout => {
